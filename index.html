@@ -619,7 +619,7 @@ $("signin").addEventListener("submit",function(ev){
   var n=$("nm").value.trim(),p=$("pn").value.trim(),err=$("err");
   if(n.length<2){err.textContent="Use a name with at least 2 letters.";return}
   if(!/^\d{4}$/.test(p)){err.textContent="The PIN must be 4 digits.";return}
-  if(!HAS_SERVER){err.textContent="Joining needs the online link (tinyurl.com/tecbchecklist).";return}
+  if(!HAS_SERVER){err.textContent="Joining needs the online link (henriquembm283.github.io/tecb-album).";return}
   err.textContent="Checking…";pin=p;
   google.script.run.withSuccessHandler(function(r){err.textContent="";signedIn(r)})
     .withFailureHandler(function(e){err.textContent=(e&&e.message)||"Could not join. Try again."}).join(n,p);
