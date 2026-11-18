@@ -251,6 +251,12 @@ footer small{font-size:9px;opacity:.75}
 .howto p{margin:0;font-size:14px}
 @media (max-width:560px){.howto{grid-template-columns:1fr}.howto .eye{display:none}}
 .howto button{border:0;background:none;padding:0;font-weight:800;color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+
+.card3d .front video.clip{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s var(--ease-out)}
+.card3d .front video.clip.on{opacity:1}
+.clipload{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:2;background:rgba(10,18,40,.75);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.slot.art.L .face .play{position:absolute;right:6px;bottom:6px;z-index:2;width:28px;height:28px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1.5px var(--navy)}
+.slot.art.L .face .play svg{width:13px;height:13px;margin-left:2px}
 canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card3d.flip{transform:rotateY(180deg)}}
 </style>
@@ -360,7 +366,7 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
     var ok=function(){},no=function(){},api={
       withSuccessHandler:function(f){ok=f;return api},
       withFailureHandler:function(f){no=f;return api}};
-    ["getState","join","save","scan","getArt"].forEach(function(k){
+    ["getState","join","save","scan","getArt","getVideo"].forEach(function(k){
       api[k]=function(){
         fetch(API,{method:"POST",body:JSON.stringify({a:k,args:[].slice.call(arguments)})})
           .then(function(r){return r.text().then(function(t){
@@ -454,6 +460,7 @@ function paintSlot(s,w){
   }
   f.appendChild(el("span","num",pad(s[0])));f.appendChild(el("span","ttl",s[1]));
   if(n>0)f.appendChild(el("span","spare","+"+n));
+  if(got&&ART[s[0]]&&s[2]==="L"){var pl=el("span","play");pl.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>';pl.title="Watch the animation";f.appendChild(pl)}
   st.children[1].textContent=n;st.children[0].disabled=n<=0;st.children[2].disabled=n>=MAXSP;
 }
 function secCount(sec){var all=S.filter(function(x){return x[3]===sec});return all.filter(function(x){return have[x[0]]}).length+" / "+all.length}
@@ -713,7 +720,9 @@ function cardVis(n,img,animate){
   var land=BY[n]&&[35,36,48,49].indexOf(n)>=0;
   var r=el("div","reveal"+(land?" land":"")),c=el("div","card3d"+(animate?" flip":" done"));
   var bk=el("div","side back",pad(n)),fr=el("div","side front"),im=el("img");im.alt=tec(n)+" "+BY[n][1];im.src=img;fr.appendChild(im);
-  c.appendChild(bk);c.appendChild(fr);r.appendChild(c);return r;
+  c.appendChild(bk);c.appendChild(fr);r.appendChild(c);
+  if(BY[n][2]==="L")loadClip(n,fr,animate?750:0);
+  return r;
 }
 function scanAgain(){closeSheet();$("scanIn").click()}
 $("scanB").addEventListener("click",function(){
@@ -742,7 +751,7 @@ function fail(why){
     acts:[{t:"Try again",pri:true,f:scanAgain},{t:"Cancel",f:closeSheet}]});
 }
 function viewArt(n){
-  sheet({vis:cardVis(n,ART[n],false),h:tec(n),p:BY[n][1]+" · "+RN[BY[n][2]],
+  sheet({vis:cardVis(n,ART[n],false),h:tec(n),p:BY[n][1]+" · "+RN[BY[n][2]]+(BY[n][2]==="L"?" · animated":""),
     acts:[{t:"Close",pri:true,f:closeSheet},{t:"Not in my album",f:function(){have[n]=false;spares[n]=0;closeSheet();renderAlbum();changed()}}]});
 }
 function restoreArt(list){
@@ -760,6 +769,24 @@ function renderHowto(){
   var bt=el("button",null,"scan it");bt.type="button";bt.setAttribute("data-scan","");p.appendChild(bt);p.appendChild(document.createTextNode(" with your phone."));b.appendChild(p);
 }
 document.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest("[data-scan]");if(t)$("scanB").click()});
+
+/* legendaries: an animated clip that loops until the person closes it */
+var CLIP={};
+function loadClip(n,fr,delay){
+  var badge=el("span","clipload","Loading animation…");fr.appendChild(badge);
+  function put(src){
+    if(!src){badge.remove();return}
+    setTimeout(function(){
+      var v=document.createElement("video");v.src=src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.setAttribute("playsinline","");
+      v.className="clip";v.setAttribute("aria-label","Animated "+tec(n));
+      v.addEventListener("playing",function(){badge.remove();v.classList.add("on")});
+      fr.appendChild(v);var p=v.play();if(p&&p.catch)p.catch(function(){badge.textContent="Tap to play";fr.addEventListener("click",function(){v.play()},{once:true})});
+    },delay);
+  }
+  if(CLIP[n]!==undefined){put(CLIP[n]);return}
+  if(!HAS_SERVER||!me){badge.remove();return}
+  google.script.run.withSuccessHandler(function(src){CLIP[n]=src||null;put(src)}).withFailureHandler(function(){badge.remove()}).getVideo(me,pin,n);
+}
 /* ---------- start ---------- */
 lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,30000);
 if(HAS_SERVER){try{var u=JSON.parse(localStorage.getItem(LSU)||"null");if(u&&u.n&&u.p){pin=u.p;google.script.run.withSuccessHandler(signedIn).withFailureHandler(function(){}).join(u.n,u.p)}}catch(e){}}
