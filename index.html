@@ -363,9 +363,17 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
     ["getState","join","save","scan","getArt"].forEach(function(k){
       api[k]=function(){
         fetch(API,{method:"POST",body:JSON.stringify({a:k,args:[].slice.call(arguments)})})
-          .then(function(r){return r.json()})
-          .then(function(j){if(j&&j.ok)ok(j.r);else no(new Error((j&&j.error)||"Server error."))})
-          .catch(function(){no(new Error("No connection. Try again."))});
+          .then(function(r){return r.text().then(function(t){
+            var j=null;try{j=JSON.parse(t)}catch(e){}
+            if(j&&j.ok){ok(j.r);return}
+            if(j){no(new Error(j.error||"Server error."));return}
+            /* not JSON: Google sent an HTML page instead of an answer */
+            var why=/doPost/i.test(t)?"The Google script has no doPost yet: deploy the new Code.gs as a New version."
+              :/authori[sz]/i.test(t)?"The Google script needs permission: run getState once in the editor and allow access."
+              :"The Google script answered with an error page (HTTP "+r.status+"). Deploy the new Code.gs as a New version.";
+            no(new Error(why));
+          })})
+          .catch(function(e){no(new Error("Can't reach the Google script ("+((e&&e.message)||"network")+"). Check your connection."))});
       };
     });
     return api;
