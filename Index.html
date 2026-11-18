@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#004990">
+<title>TeC-B sticker album</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#004990; --navy:#142350; --paper:#EEF2F7; --card:#FFFFFF; --yel:#FFC20E; --yel-d:#C99A06;
+  --red:#D7262E; --green:#1F8A4C; --muted:#5B6680; --line:#CBD4E1; --dot:#C3CEDD;
+  --ease-out:cubic-bezier(.2,.8,.2,1); --r:8px; --gut:clamp(14px,3vw,48px); --slot:clamp(92px,7vw,132px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--navy);font-family:Archivo,system-ui,sans-serif;font-size:15px;line-height:1.45;
+  background-image:radial-gradient(circle,var(--dot) .9px,transparent 1.3px);background-size:12px 12px;
+  padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+
+/* ---------- cover ---------- */
+.cover{background:var(--blue);color:#fff;position:relative;overflow:hidden}
+.cover::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(-58deg,rgba(255,255,255,.035) 0 2px,transparent 2px 14px)}
+.cover-in{max-width:1680px;margin:0 auto;padding:18px var(--gut) 20px;position:relative;z-index:1}
+.kicker{display:flex;justify-content:space-between;gap:12px;font-stretch:70%;font-weight:700;font-size:14px;color:#CFE0F5}
+.live{display:inline-flex;align-items:center;gap:6px}
+.live i{width:7px;height:7px;border-radius:50%;background:#7FD18B}
+.live.off i{background:var(--red)}
+.hello{margin:18px 0 2px;font-size:15px;color:#CFE0F5;min-height:22px}
+.score{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.big{font-stretch:125%;font-weight:900;font-size:clamp(52px,14vw,104px);line-height:.82;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big small{font-size:.42em;letter-spacing:0;color:#9FC0E6;margin-left:4px}
+.legend{display:flex;flex-direction:column;gap:2px;padding-bottom:6px}
+.stars{display:flex;gap:4px}
+.stars span{width:22px;height:30px;border-radius:3px;border:1.5px dashed rgba(255,255,255,.45)}
+.stars span.on{border:0;background:var(--yel);box-shadow:inset 0 0 0 1.5px var(--yel-d)}
+.legend b{font-stretch:70%;font-weight:800;font-size:14px;color:#CFE0F5}
+.ticks{display:grid;grid-template-columns:repeat(50,1fr);gap:2px;margin-top:16px;height:16px}
+.ticks i{border-radius:2px;background:rgba(255,255,255,.16);transition:background-color .3s var(--ease-out)}
+.ticks i.C{background:#fff} .ticks i.R{background:#8EC1FF} .ticks i.L{background:var(--yel)}
+.status{margin-top:10px;font-size:13px;color:#CFE0F5;min-height:19px}
+
+/* ---------- shell ---------- */
+.shell{max-width:1680px;margin:0 auto;padding:0 var(--gut)}
+.panel{display:none;padding-top:20px}
+.panel.on{display:block}
+h2{font-stretch:125%;font-weight:900;font-size:26px;line-height:1;color:var(--blue);margin:0 0 6px;letter-spacing:-.01em}
+.lead{margin:0 0 14px;color:var(--muted);font-size:14px;max-width:60ch}
+h3.sub{margin:26px 0 10px;font-stretch:112%;font-weight:900;font-size:18px;border-bottom:1.5px solid var(--navy);padding-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+h3.sub span{font-stretch:72%;font-weight:800;font-size:13px;color:var(--muted)}
+
+/* ---------- tab bar (mobile) ---------- */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--navy);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{border:0;background:none;color:#9FB0CC;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:56px;justify-content:center;font-stretch:70%;font-weight:800;font-size:13px;border-radius:10px;position:relative}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-selected=true]{color:#fff;background:rgba(255,255,255,.08)}
+nav.tabs .badge{position:absolute;top:6px;left:calc(50% + 8px);min-width:18px;height:18px;border-radius:9px;background:var(--yel);color:var(--navy);font-size:11px;line-height:18px;padding:0 5px}
+
+/* ---------- sign in ---------- */
+.join{background:var(--card);border:1.5px solid var(--navy);border-radius:var(--r);padding:16px;margin-bottom:22px;box-shadow:4px 4px 0 var(--navy)}
+.join h3{margin:0 0 4px;font-stretch:112%;font-weight:900;font-size:19px}
+.join p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.fields{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
+.fields input{font-size:16px;min-height:46px;padding:0 12px;border:1.5px solid var(--navy);border-radius:6px;background:#fff;width:100%}
+.btn{min-height:46px;padding:0 20px;border:0;border-radius:6px;background:var(--blue);color:#fff;font-stretch:80%;font-weight:800;font-size:16px;transition:transform .12s var(--ease-out)}
+.btn:active{transform:scale(.97)}
+.err{color:#B3261E;font-size:13px;margin-top:8px;min-height:18px}
+
+/* ---------- album: view switch + spares switch ---------- */
+.bar{position:sticky;top:0;z-index:10;padding:10px 0 12px;background:linear-gradient(var(--paper) 82%,transparent);display:flex;flex-direction:column;gap:10px}
+.views{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border:2px solid var(--navy);border-radius:12px;padding:3px;gap:3px}
+.views button{border:0;background:none;min-height:46px;border-radius:9px;font-stretch:80%;font-weight:900;font-size:15px;color:var(--navy);display:flex;align-items:center;justify-content:center;gap:6px}
+.views button small{font-stretch:70%;font-weight:800;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.views button[aria-pressed=true]{background:var(--navy);color:#fff}
+.views button[aria-pressed=true] small{color:#9FB0CC}
+.sparesw{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 14px;border-radius:12px;border:2px solid var(--navy);background:#fff;text-align:left}
+.sparesw .sw{flex:none;width:52px;height:30px;border-radius:15px;background:#AEB9CB;position:relative;transition:background-color .18s var(--ease-out)}
+.sparesw .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(20,35,80,.35);transition:transform .18s var(--ease-out)}
+.sparesw b{display:block;font-stretch:90%;font-weight:900;font-size:16px}
+.sparesw span.d{display:block;font-size:13px;color:var(--muted)}
+.sparesw[aria-pressed=true]{background:var(--yel);border-color:var(--yel-d)}
+.sparesw[aria-pressed=true] .sw{background:var(--navy)}
+.sparesw[aria-pressed=true] .sw::after{transform:translateX(22px)}
+.sparesw[aria-pressed=true] span.d{color:var(--navy)}
+@media (max-width:979px){.sparesw[aria-pressed=false] span.d{display:none}.sparesw{min-height:50px}}
+
+/* ---------- album grid ---------- */
+.sec{margin:20px 0 10px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1.5px solid var(--navy);padding-bottom:6px}
+.sec h3{margin:0;font-stretch:112%;font-weight:900;font-size:18px}
+.sec span{font-stretch:70%;font-weight:800;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--slot),1fr));gap:clamp(10px,1vw,16px) clamp(8px,1vw,14px)}
+.slot{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0}
+.tapper{position:absolute;inset:0;border:0;background:none;padding:0;border-radius:7px;z-index:1}
+.face{position:relative;aspect-ratio:30/42;border-radius:7px;overflow:hidden;
+  background:repeating-linear-gradient(45deg,#E2E8F0 0 2px,#F4F7FA 2px 7px);border:1.5px dashed #9AA8BE;
+  display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center;
+  transition:transform .24s var(--ease-out),box-shadow .24s var(--ease-out)}
+.face .num{position:relative;font-stretch:125%;font-weight:900;font-size:clamp(26px,2.4vw,40px);line-height:1;color:#A9B6CA;letter-spacing:-.03em}
+.face .ttl{position:relative;font-stretch:72%;font-weight:700;font-size:clamp(10.5px,.8vw,13px);line-height:1.2;color:var(--muted);padding:0 8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.slot.R .face{border-color:#6E9FD8} .slot.L .face{border-color:var(--yel-d);background:repeating-linear-gradient(45deg,#F3E7BE 0 2px,#FBF5E1 2px 7px)}
+.slot.L .face .num{color:#D3B657}
+/* got: a blurred colour teaser of the sticker — never the real picture, so no spoilers */
+.slot.got .face{border:0;background:var(--navy);box-shadow:0 6px 14px -6px rgba(20,35,80,.5)}
+.slot.got .face .tz{position:absolute;inset:-12%;width:124%;height:124%;filter:blur(7px) saturate(1.3);opacity:.9}
+.slot.got .face::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,35,80,.15),rgba(20,35,80,.65))}
+.slot.got .face .num{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.slot.got .face .ttl{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.slot.got .face .ok{position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--green);display:flex;align-items:center;justify-content:center}
+.slot.got .face .ok svg{width:14px;height:14px}
+.slot.got.L .face{box-shadow:0 0 0 2px var(--yel),0 6px 14px -6px rgba(20,35,80,.5)}
+.slot.got.R .face{box-shadow:0 0 0 2px #8EC1FF,0 6px 14px -6px rgba(20,35,80,.5)}
+.tapper:active + .face{transform:scale(.96)}
+.slot.pop .face{animation:stick .28s var(--ease-out)}
+@keyframes stick{0%{transform:scale(.9) rotate(-2.5deg)}100%{transform:none}}
+.cap{display:flex;gap:6px;align-items:baseline;justify-content:space-between}
+.cap b{font-stretch:70%;font-weight:800;font-size:13px}
+.cap{white-space:nowrap}
+.cap em{font-style:normal;font-weight:900;font-size:12px;color:var(--blue);letter-spacing:1px}
+.slot.L .cap b,.slot.L .cap em{color:#8A6A00}
+.spare{position:absolute;top:6px;right:6px;z-index:2;background:var(--yel);color:var(--navy);font-stretch:72%;font-weight:900;font-size:13px;border-radius:999px;padding:1px 8px;box-shadow:0 0 0 1.5px var(--navy)}
+/* spares editing: stepper on owned stickers, others fade */
+.step{display:none}
+body.spare-mode .slot.got .step{display:flex;position:absolute;left:4px;right:4px;bottom:4px;z-index:3;background:#fff;border-radius:8px;box-shadow:0 0 0 2px var(--navy);align-items:center;justify-content:space-between}
+.step button{width:34px;height:34px;border:0;background:none;font-weight:900;font-size:20px;line-height:1;color:var(--navy);border-radius:7px}
+.step button:disabled{opacity:.3;cursor:default}
+.step output{font-stretch:72%;font-weight:900;font-size:16px;font-variant-numeric:tabular-nums}
+body.spare-mode .slot.got .spare{display:none}
+body.spare-mode .slot:not(.got){opacity:.35}
+body.spare-mode .slot:not(.got) .tapper{pointer-events:none}
+.empty{padding:28px 4px;color:var(--muted)}
+
+/* ---------- missing view: read-only list with who can help ---------- */
+.miss{display:grid;gap:8px}
+.mrow{display:grid;grid-template-columns:54px 1fr;gap:4px 12px;align-items:center;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.mrow .n{grid-row:1/3;font-stretch:125%;font-weight:900;font-size:24px;color:var(--blue);letter-spacing:-.02em}
+.mrow.L{border-color:var(--yel-d);background:#FFFBEC} .mrow.L .n{color:#8A6A00}
+.mrow .t{font-weight:700;font-size:14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.mrow .t em{font-style:normal;font-stretch:72%;font-weight:800;font-size:11px;color:var(--blue)}
+.mrow.L .t em{color:#8A6A00}
+.mrow .who{font-size:13px;color:var(--muted)}
+.mrow .who b{color:var(--green);font-weight:800}
+.ro{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.ro svg{width:16px;height:16px;flex:none}
+
+/* ---------- board ---------- */
+.board{background:var(--card);border:1.5px solid var(--navy);border-radius:var(--r);overflow:hidden}
+.row{display:grid;grid-template-columns:30px 1fr auto;gap:4px 12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .pos{font-stretch:70%;font-weight:900;font-size:20px;color:var(--blue);font-variant-numeric:tabular-nums}
+.row .nm{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .nm small{font-weight:500;color:var(--muted)}
+.row .ct{font-stretch:70%;font-weight:900;font-size:17px;font-variant-numeric:tabular-nums}
+.row .meter{grid-column:2/4;display:flex;align-items:center;gap:8px}
+.row .meter .track{flex:1;height:6px;border-radius:3px;background:#DCE4EF;overflow:hidden}
+.row .meter .track i{display:block;height:100%;background:var(--blue)}
+.row .mini{display:flex;gap:3px}
+.row .mini span{width:8px;height:11px;border-radius:2px;border:1px solid #C9B36A}
+.row .mini span.on{background:var(--yel);border-color:var(--yel-d)}
+.row.me{background:#F1F6FD} .row.win{background:#FFF6D6}
+.tag{display:inline-block;margin-left:6px;font-stretch:72%;font-weight:900;font-size:11px;padding:1px 7px;border-radius:999px;background:var(--yel);color:var(--navy);vertical-align:2px}
+
+/* ---------- trades ---------- */
+.deals{display:grid;gap:12px}
+.deal{background:var(--card);border:1.5px solid var(--navy);border-radius:var(--r);padding:14px}
+.deal h4{margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:800;font-size:17px}
+.deal h4 span{font-stretch:72%;font-weight:900;font-size:13px;color:var(--blue);white-space:nowrap}
+.deal .line{display:grid;grid-template-columns:78px 1fr;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:14px;align-items:start}
+.deal .line:first-of-type{border-top:0}
+.deal .line > b{font-stretch:72%;font-weight:800;color:var(--muted);font-size:13px;padding-top:3px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;align-items:baseline;gap:5px;font-size:13px;padding:3px 9px;border-radius:999px;border:1.5px solid var(--navy);background:#fff;max-width:100%}
+.chip b{font-stretch:72%;font-weight:900}
+.chip span{font-stretch:80%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip.R{border-color:var(--blue)} .chip.L{background:#FFF4CC;border-color:var(--yel-d)}
+.market{background:var(--card);border:1.5px solid var(--navy);border-radius:var(--r);overflow:hidden}
+.mk{display:grid;grid-template-columns:48px 1fr;gap:2px 10px;padding:10px 12px;border-top:1px solid var(--line)}
+.mk:first-child{border-top:0}
+.mk .n{grid-row:1/3;font-stretch:112%;font-weight:900;font-size:19px;color:var(--blue)}
+.mk .t{font-weight:700;font-size:14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.mk .t .need{font-stretch:72%;font-weight:900;font-size:11px;background:var(--green);color:#fff;border-radius:999px;padding:1px 7px}
+.mk .who{font-size:13px;color:var(--muted)}
+.mk .who b{color:var(--navy)}
+.mk.L .n{color:#8A6A00}
+.note{background:var(--card);border:1.5px dashed var(--line);border-radius:var(--r);padding:16px;color:var(--muted)}
+
+footer{margin:36px 0 10px;font-size:12px;color:var(--muted)}
+footer small{font-size:9px;opacity:.75}
+
+/* ---------- desktop: album + sidebar, nothing pinned ---------- */
+@media (min-width:980px){
+  body{padding-bottom:0}
+  nav.tabs{display:none}
+  .shell{display:grid;grid-template-columns:minmax(0,1fr) clamp(340px,26vw,460px);grid-template-rows:auto 1fr;gap:0 28px;align-items:start}
+  .panel{display:block}
+  #p-album{grid-row:1/3}
+  #p-board{grid-column:2;grid-row:1}
+  #p-trades{grid-column:2;grid-row:2}
+  .bar{flex-direction:row;align-items:stretch}
+  .views{flex:1}
+  .sparesw{width:auto;flex:0 0 300px}
+}
+@media (min-width:600px) and (max-width:979px){nav.tabs{padding-left:calc(50% - 280px);padding-right:calc(50% - 280px)}}
+@media (max-width:360px){.views button{font-size:14px}.views button small{display:none}}
+
+/* ---------- scan ---------- */
+.scanbtn{display:inline-flex;align-items:center;gap:10px;margin-top:16px;min-height:52px;padding:0 20px 0 16px;border-radius:999px;border:0;background:var(--yel);color:var(--navy);
+  font-stretch:90%;font-weight:900;font-size:17px;box-shadow:0 3px 0 var(--yel-d);transition:transform .12s var(--ease-out)}
+.scanbtn svg{width:24px;height:24px}
+.scanbtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--yel-d)}
+.scanbtn small{font-stretch:72%;font-weight:700;font-size:13px;opacity:.75}
+.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,18,40,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sheet[hidden]{display:none}
+.sheet .box{width:min(420px,100%);color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.sheet h3{margin:0;font-stretch:112%;font-weight:900;font-size:24px;line-height:1.1}
+.sheet p{margin:0;color:#CFE0F5;font-size:15px;max-width:34ch}
+.sheet .acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.sheet .acts button{min-height:48px;padding:0 20px;border-radius:999px;font-stretch:85%;font-weight:900;font-size:16px;border:2px solid #fff;background:none;color:#fff}
+.sheet .acts button.pri{background:var(--yel);border-color:var(--yel);color:var(--navy)}
+.reveal{width:min(260px,70vw);perspective:900px}
+.reveal.land{width:min(340px,86vw)}
+.card3d{position:relative;transform-style:preserve-3d;aspect-ratio:30/42}
+.reveal.land .card3d{aspect-ratio:42/30}
+.card3d .side{position:absolute;inset:0;border-radius:10px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 20px 40px -12px rgba(0,0,0,.6)}
+.card3d .back{background:var(--blue);display:flex;align-items:center;justify-content:center;font-stretch:125%;font-weight:900;font-size:44px;color:#fff;
+  background-image:repeating-linear-gradient(-58deg,rgba(255,255,255,.07) 0 2px,transparent 2px 12px)}
+.card3d .front{transform:rotateY(180deg);background:var(--navy)}
+.card3d .front img{width:100%;height:100%;object-fit:cover;display:block}
+.card3d.flip{animation:flip .7s var(--ease-out) forwards}
+.card3d.done{transform:rotateY(180deg)}
+@keyframes flip{0%{transform:rotateY(0) scale(.92)}60%{transform:rotateY(200deg) scale(1.04)}100%{transform:rotateY(180deg) scale(1)}}
+.spin{width:44px;height:44px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:var(--yel);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.slot.art .face{border:0;background:var(--navy)}
+.slot.art .face img.real{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.slot.art .face .num,.slot.art .face .ttl,.slot.art .face::before{display:none}
+.slot.art .face .ok{background:var(--yel);color:var(--navy)}
+.row .scn{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+
+.howto{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:var(--card);border:1.5px solid var(--navy);border-radius:var(--r);padding:14px 16px;margin:0 0 16px;box-shadow:4px 4px 0 var(--yel)}
+.howto .eye{width:46px;height:46px;border-radius:50%;background:var(--yel);display:flex;align-items:center;justify-content:center;color:var(--navy)}
+.howto .eye svg{width:24px;height:24px}
+.howto h3{margin:0 0 4px;font-stretch:100%;font-weight:900;font-size:16px}
+.howto ol{margin:0;padding-left:18px;font-size:14px;color:var(--navy)}
+.howto ol li{margin:2px 0}
+.howto p{margin:0;font-size:14px}
+@media (max-width:560px){.howto{grid-template-columns:1fr}.howto .eye{display:none}}
+.howto button{border:0;background:none;padding:0;font-weight:800;color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card3d.flip{transform:rotateY(180deg)}}
+</style>
+</head>
+<body>
+<header class="cover">
+  <div class="cover-in">
+    <div class="kicker"><span>TeC-B sticker album · 2026/27</span><span class="live" id="live"><i></i><span id="liveT">Connecting</span></span></div>
+    <p class="hello" id="hello">Your album</p>
+    <div class="score">
+      <div class="big" aria-live="polite"><span id="count">0</span><small>/ 50</small></div>
+      <div class="legend" aria-label="Legendaries collected">
+        <div class="stars" id="stars"><span></span><span></span><span></span><span></span></div>
+        <b id="legT">0 of 4 legendaries</b>
+      </div>
+    </div>
+    <div class="ticks" id="ticks" aria-hidden="true"></div>
+    <div class="status" id="status" role="status">Your ticks save on this phone.</div>
+    <button type="button" class="scanbtn" id="scanB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg>Scan a sticker <small>to unlock the picture</small></button>
+    <input type="file" id="scanIn" accept="image/*" capture="environment" hidden>
+  </div>
+</header>
+
+<main class="shell">
+  <section class="panel on" id="p-album" role="tabpanel" aria-labelledby="t-album">
+    <form class="join" id="signin" autocomplete="off">
+      <h3>Join the board</h3>
+      <p>Pick a name and a 4-digit PIN. Use the same ones on any phone to get your album back.</p>
+      <div class="fields">
+        <label style="flex:1 1 180px">Name<input id="nm" maxlength="30" required autocomplete="nickname"></label>
+        <label style="flex:0 1 110px">PIN<input id="pn" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></label>
+        <button class="btn" type="submit">Join</button>
+      </div>
+      <div class="err" id="err" role="alert"></div>
+    </form>
+
+    <h2>Your album</h2>
+    <p class="lead">Tap a slot when the sticker is in your album, or scan it with your camera to see the real picture. Stick all 50 to win, but only 2 copies of each legendary exist.</p>
+    <div class="howto" id="howto">
+      <div class="eye" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+      <div id="howtoBody">
+        <h3>Want to see a sticker without the blur?</h3>
+        <ol>
+          <li>Tap <button type="button" data-scan>Scan a sticker</button>.</li>
+          <li>Take a photo of the sticker with your phone: one sticker, light background, no glare.</li>
+          <li>The real picture appears here, and the sticker is ticked for you.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="bar">
+      <div class="views" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All <small id="nAll">50</small></button>
+        <button type="button" data-f="got" aria-pressed="false">Got <small id="nGot">0</small></button>
+        <button type="button" data-f="missing" aria-pressed="false">Missing <small id="nMiss">50</small></button>
+      </div>
+      <button type="button" class="sparesw" id="spareT" aria-pressed="false">
+        <span class="sw" aria-hidden="true"></span>
+        <span><b id="spT">Edit my spares</b><span class="d" id="spD">Off. Turn on to set how many doubles you have.</span></span>
+      </button>
+    </div>
+    <div id="album"></div>
+  </section>
+
+  <section class="panel" id="p-trades" role="tabpanel" aria-labelledby="t-trades">
+    <h2>Trades</h2>
+    <p class="lead">Who has what, and swaps that work for both of you.</p>
+    <h3 class="sub">Best swaps for you</h3>
+    <div class="deals" id="deals"><div class="note">Loading trades…</div></div>
+    <h3 class="sub">Every spare on the board <span id="mkN"></span></h3>
+    <div class="market" id="market"><div class="empty">Loading…</div></div>
+  </section>
+
+  <section class="panel" id="p-board" role="tabpanel" aria-labelledby="t-board">
+    <h2>Board</h2>
+    <p class="lead">First to stick all 50 wins. The yellow marks are legendaries.</p>
+    <div class="board" id="board"><div class="empty">Loading the board…</div></div>
+  </section>
+
+  <footer>TeC-B, Technical Capability Branch. We solve IT <small>(and assets)</small>.</footer>
+</main>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="shH">
+  <div class="box">
+    <div id="shVis"></div>
+    <h3 id="shH"></h3>
+    <p id="shP"></p>
+    <div class="acts" id="shA"></div>
+  </div>
+</div>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" id="t-album" aria-controls="p-album" aria-selected="true" data-p="p-album">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h3v4H8zM13 7h3v4h-3zM8 13h3v4H8zM13 13h3v4h-3z"/></svg>Album</button>
+  <button role="tab" id="t-trades" aria-controls="p-trades" aria-selected="false" data-p="p-trades">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>Trades<span class="badge" id="dealN" hidden></span></button>
+  <button role="tab" id="t-board" aria-controls="p-board" aria-selected="false" data-p="p-board">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 20V11M12 20V5M18 20v-6"/></svg>Board</button>
+</nav>
+
+<script>
+/* Outside Google (GitHub Pages) there is no google.script.run, so talk to the Apps Script web app over plain HTTPS. */
+(function(){
+  var API="https://script.google.com/macros/s/AKfycbyu41dsAr3VFHetAMMqVNiKu9dfDYKh3UG6XFfMn7Y8NjZHbuuXa9TPIP-jDz80_-qh/exec";
+  if(window.google&&google.script&&google.script.run)return;
+  if(!window.fetch)return;
+  window.google={script:{get run(){
+    var ok=function(){},no=function(){},api={
+      withSuccessHandler:function(f){ok=f;return api},
+      withFailureHandler:function(f){no=f;return api}};
+    ["getState","join","save","scan","getArt"].forEach(function(k){
+      api[k]=function(){
+        fetch(API,{method:"POST",body:JSON.stringify({a:k,args:[].slice.call(arguments)})})
+          .then(function(r){return r.json()})
+          .then(function(j){if(j&&j.ok)ok(j.r);else no(new Error((j&&j.error)||"Server error."))})
+          .catch(function(){no(new Error("No connection. Try again."))});
+      };
+    });
+    return api;
+  }}};
+})();
+</script>
+<script>
+(function(){
+/* [number, title, rarity C/R/L, section] — keep in sync with TEC_manifest.csv */
+var S=[[1, "ANOTHER MEETING?!", "C", "The squad"], [2, "THE QUIET GENIUS", "C", "The squad"], [3, "THE TMS CREATOR", "C", "The squad"], [4, "THE DESK CURATOR", "C", "The squad"], [5, "WIZARD", "C", "The squad"], [6, "MR. NO PROBLEM", "C", "The squad"], [7, "SILENT MODE: ON", "C", "The squad"], [8, "SALAD DAYS", "C", "The squad"], [9, "NOISE CANCELLING", "C", "The squad"], [10, "RAIDER OF THE LOST MTT", "C", "The squad"], [11, "AGENT CIS", "C", "The squad"], [12, "THE POLYGLOT PM", "C", "The squad"], [13, "LORD OF THE LABELS", "L", "The squad"], [14, "MON DIEU!", "R", "The squad"], [15, "THE HELP DESK COLOSSUS", "L", "The squad"], [16, "THE PACK", "R", "Spirit animals"], [17, "INFINITE PATIENCE", "C", "Spirit animals"], [18, "MONKEY PATCH", "C", "Spirit animals"], [19, "THE BUILDER", "C", "Spirit animals"], [20, "THE WEB MASTER", "C", "Spirit animals"], [21, "NOTHING GETS LOST", "C", "Spirit animals"], [22, "ON WATCH", "C", "Spirit animals"], [23, "FREQUENT FLYER", "C", "Spirit animals"], [24, "THE SHOWCASE", "C", "Spirit animals"], [25, "EYES ON THE DEADLINE", "C", "Spirit animals"], [26, "THE BACKBONE", "C", "Spirit animals"], [27, "MIGUEL SAID NO", "C", "The Miguel saga"], [28, "MIGUEL JOINED (SORT OF)", "C", "The Miguel saga"], [29, "MIGUEL BROUGHT FRIENDS", "C", "The Miguel saga"], [30, "MIGUEL'S FAN ZONE", "C", "The Miguel saga"], [31, "¡CAMPEONES DEL MUNDO!", "L", "The Miguel saga"], [32, "NETWORK SPECIALISTS", "C", "The Miguel saga"], [33, "NEXT STOP: TRAM BAR", "C", "The Miguel saga"], [34, "BIKERS WANTED", "C", "The Miguel saga"], [35, "VALUABLE ASSETS", "C", "Food & drinks"], [36, "XICO'S WORST NIGHTMARE", "C", "Food & drinks"], [37, "¡A COMER HUEVOS!", "C", "Food & drinks"], [38, "SUGAR RUSH", "C", "Food & drinks"], [39, "SHOTS FIRED!", "C", "Food & drinks"], [40, "THE CAKE BOSS", "R", "Food & drinks"], [41, "CODE WORD: GRELHA", "R", "Food & drinks"], [42, "EL COVID ME MOLESTÓ", "L", "Office legends"], [43, "LOST", "C", "Office legends"], [44, "JESUS \"FRED\" KNOWS", "C", "Office legends"], [45, "SERVED WITH A SMILE", "C", "Office legends"], [46, "PROPERTY OF TEC-B", "C", "Office legends"], [47, "THE FAREWELL HEIST", "R", "Office legends"], [48, "SMILE, WE'RE BEING ROBBED", "C", "Office legends"], [49, "PEDRO IS ALWAYS WITH US", "R", "Office legends"], [50, "THE WHOLE SQUAD", "C", "Office legends"]];
+/* 10 x 14 px colour teasers: enough for a mood, never enough to see the picture */
+var TZ={"1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcklEQVR42gXBu47TQBQA0HncedjjVyJ2V0CxQigFWpCQdhE91BR8AV9IsR0dHQ0FP4AQCiBBTDaOicfjeV3OoZvrd5XRhDJKARGNkau6qI0cJrf9sYOqqjQgUlhIyZjYbO6/ff2k1Hw/TLcfPgNQrHJuG4hG9mM+Huc0jExzNs9aIGjFnj6qX92sCRe3n/pvu/79xzvvLMXlYAlwGun8c/fla6mLSyF76vueBRfJjEEY6DQ7iyNf8slFG3QKMXgeXY4jsrZkpuRtrZWUS8CTJz6ShHFh/F/ROJCwXulFqD6Eg1TfD+r3qCW3GZEAUkJYIjk2TWy7yxfP7j28yKAnbxSFx9XcKMcyoUSr8vxCaHW1aVYVNSS81OJNUZxLAOeStSiAhbvTMoUHnRj2s7f4JzPLKr4+e+5PDNA4K4Z96kzdrVo09TaInadwnFPmgRwHJXkMUQiINE0kbW1YMoOIKIvq19/Ze58xUcIJySnjHKlb3H84KseFC9gBTgAAAABJRU5ErkJggg==", "2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABYklEQVR42gXBOW4UURAG4Kp61dPdszBL29gsJkKCECHuwBEIOSIxF0BCpECAIAAMnsFL26Pp5W3183387NXbzbwWkh6khTbLeloJgw9D+ru70aPZ/GUtGfzxwM3p+s3rF03NMOwD3n/4qpW6B+qJ+PNEp27Ihysp1tdtf94Od/tOb2N+d4WJ0uMzPFxtd+eHL99Xn751/ZDFkUak/eAXtTxa4Vg8en/XDpfXeQy8vFcpYASbTlxTMg7Rx+RMkLIlJRRKMFhggLIysQjnmLJlAwym6nheSVPiYvtvXZuR9T0JQGZkWTer8vjJZNntMidSF0OWFE4384vWiKA599FsCysjzWSy7eJlN1BBJ0erIbL4MVimYrboYvG75V9XvoOmZAJfKqv5ov0Tnj89C4vNbFqW7mRaldnsx89dBCuccO1uc88OAEbNJslgVnEYSb1JM7u/uwmj90RiMGYj2BjKrh//A5Ge497oLL9UAAAAAElFTkSuQmCC", "3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABhElEQVR42gXBz2oTQRgA8O/7Zmb/JV3asklY2sSKNLYBKRVRL7158QW8+gw+m2fBiy8gguBBhJI23WTTZjY7uzszO+Pvh+dvPsdRHCeUhNA7EYUxoidEY91qXfJkkBrAfOTfzk3RjBYXVwkzDNi29d9//OSMISF4572xj0/q7r6cBWi0vWt9rTTefPxyNklXT1Up67rDOAxTAQAkO8fJE0eYZsGLyaDtnG67AHSeGsZMva+00Ww0fd0Z+/L0YCNbQn+RD94/SyyJ26IiQt7pblk0N4vs04fFetdkCU97maguCplDYOPZ9W6vHMLl7PjdIp8/z0Q0vJyfFqXcyoaNTl7JShYbuSqr+Vl2Mjm0JI4OD5T2f5cb8q53rt/X+2XxuCwkuP4oDRkX+fEw4IwT+ICQBZwzUI3ZyU4kzIG1qhLoeETBOBouzqdAbr1SX7/9CUKhDfz6/W9bdVwj9UFYGhOHtlD2QTEuqCj17UMFnHNklI/Hdau3lUEwAISI2vbARdu2/wHIhsaOsiPm1gAAAABJRU5ErkJggg==", "4": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABaklEQVR42gXBy27TQBQA0Jk747HjNI82KaVQ1DYSn0BXfAofy5IdEgvECqlSk5I0sePXeB733uEc+fT128O1NpmSoIQA0CaKLElFiM+7Rn95zJ9uh2kOxWKddCHn7838XggYib//+KOLLBUqFqbYbDYwWWz3x6XsAamO0fCgI5ELlOWiG9OizKrt3yb+AkFDkGM70YTJBULLft+uRPliy5k/G2wtCgygI/HZizZd0Z7F4bU+8u3s5ip0FCNxAh/ZsTmH7O7h83T5rh3xzak+cCBGYkDmziUf8VQ1tqubtmk6j3IyevQRdZJZFMKO/eHfLpHTCjSoiD7PFXjQDnKrOE8BsLqcXpj7O5D4capvLsvd70IHOwZsQZu31+N6U56rU5n6LnLm5dChrnsTYfnpw3peyNYWRsjJxeplsD+fz1sr9IAwCO3rMCuFzyhKOjVUN6GqmJTSScnr1Wp0/lC5Y4MpMSckJgLlnP8PSWbyq2uzmXYAAAAASUVORK5CYII=", "5": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABdElEQVR42gXBy27UMBQA0GvHscd5TBuq6bSzoEWCBaxBLFjCgr/gI/kJNkhVK8QGEK9BmZRM0wyOY19fm3PYqzfvnl5KJQVA4ACMAUACiJNLn7+jeP2ifPtS1lpBnDI+ZSwoQcBoOMD7D6WQshH8ElAg4tbeLnj3bNNpiVkUlWZC8bHiXwtZtf/S9fXupIaLCvMaoyeIpeBkcuwYQbJ6vJ2WWYUWKXfBCQokAlL/1/35ibs+uAH5Uo97XuaMMKYQhDHp443/drNvlqumqA538eoqqOeJy5Aoin4P7e/x/m7i0i3r0sbk58WXrT5fjUQxu1g/CWPvYyD002QsWcB+wlTX6te9FEnJ9OBM2IOxh6IsNxv9qKHVkclhZihFcXQc4dgNg4rb01X1+HRu8jmFNJhgPBc/WgyRGPKTxUMjzz+NsW27drefXfKFFqMjIlcvyGu1Q5cl6DwbM91jEjMXifH1+szOU2/CMM8MIAQZKctUtLP/D2fj6FbhiU8zAAAAAElFTkSuQmCC", "6": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABkElEQVR42gXBy2sTQRwA4JnZ38w+ze5mKyVNE00rFGw9CPUgiBc9CN4E/1IPghbEi16UFoyE+qRJLdbdNM2+57Xj9+GDw5fxDYwxEAKWRRA2nt8jFgglLv4WMIxEhNJ+EPZ85zyvnCB6+vwZWFSo7u37Y7AIfbQ9eHhn0vDm1edptspoXVhc/iuqpsih00ZKXdS8Ud046V/9Wrw7en32bVaKrvUmxICd5s1qXQaE7g9Gw41k9vXEddudEbMpAoSRxqRu1Xdxbdsszcuqbh4/GA7iaDnzgBv4WarALm/2AiklAlA0/PTbjDi0hlq3d+9pVS+ybF0VCJu9rUQzZyUd7G9y40HCrLvJxvxSDEL65GAS+h5LNk/WaLx//+OHKZwvr3VZvTjc20r8W0nsAJOuzl013tmdTheEa3K25KeXhexIqXFDHGTZAWVa6Cjqg816LvO5u330Q/Z8HsV2Z9CykH++vLm4KoEjiihLVdtpmVUCeOkwmtfqdJ4LjcBgFMbxPG14IwxCCBFMcKdRI03L+X975c+Hy+dTlAAAAABJRU5ErkJggg==", "7": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABfklEQVR42gXBu24TQRQA0HtnZh/j9SOY7OIoiQBFokAEBUJHgYT4Aaj4AGr+iwqJFkpKEE1QBEhRJGJjiB+J1+vdnZl7L+fg4dM3+/tFzyYAsriqZ8sNMQEAM7VNYx7ev/v65bPRIPMin7+dvfvwZVVuRECDtjYyV6v698Wln/yrEP/8nQdygwQ1YuVJaYVPnr8Fo5GBWFi4a+DVUT7qRR9/zk+nrfHBLa8bJhCRNNJ39noHdtOP1OMdnFyDYQ7kHIuIgChtlY+ZEqHUrVItBhUCBGbWiEbJdLH8Pl4zrb+OF7MwNOw9CAF5m8W72zI5P3k/CwB0WUvnZscYI33rnCYd1mc/Ltp6VYIwk4o7iYh+cPjoxbEkRsqytuBG+Y06eEFUOrZZbjgAl6xZ97vD43u7eaY+nfyaLtebhlGULnaOZnMutvfyrTyKtyAdmmh4q7jdulQlA+NRkY0bTSJUeUmVqTSLQdVNndOGQCVZMZ61TdMKgMLAQgDQ+rRq3X/pnNiBV0XVUQAAAABJRU5ErkJggg==", "8": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABiklEQVR42gXBTW/TMBgAYL+O47RZmjZd27XAFg2EQPuQEDfggkCc+A/8VxASghvSYLAeBmhtmqZJtiZ1HCf2y/PA+csP07HvcN40dVkKIYXDO/v742gVFaVm508fvH51xh2opby8+Pnty9cOHxxNws3ftcc9xhjhDto9GvT9zbV14MEsHB2MbArKmJalafr54yfPpUEXmnh934XHxyHtDy2bEUWoZVnE6GAPlUzKbcwYU1ZvOp29efc2DI8YEERU8SYTYltKBOLuUnL4CE9OT6OkZVpr1VZ5noJpPU4O7/WZl8wv4myH0apgQgoO5SbNexTfPz92hi34a38vvIp282tFkSByMBaVGvzBKGgNTWQS3+Z5YbRm/qg/fhY4iz5dm+DshaOVyMtslf+4+kXphBFj3y22ULsnTx7eKU5bssjaf8ssz8racllyU+p5Meh1C2i/3y6NNkab5Q0WuyF1u0woJMBJhyZyazcgqgYAS1C1zQEthpROJrNKyt9/BCIaYwhBrW1iQ1U1/wFxkdj6ghC6swAAAABJRU5ErkJggg==", "9": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABjElEQVR42gXByU7bQBgAYP+zeUli4tQokEQhqVBQLkhVe24PCA59jx76eH2FHji0vYUKVBUCpDFbiPfxzHiZfh+8P/k6HvlYl67rWqYlZFQIjhDgqr5cRuTdh/nRzN9cX8xng+PjWZH+SsMlAS04+/bdI45JRZ4ufp5DHBxOqG/FVBdQG47LMDEIyBAnomtwFAXB1W8026M9GwHOUybVDXkJVrfRfZpwpGt6/iPbHHgduwJ2k7XjTGK7O7lb/Q2z/Cktt7m6XoeDg2lW0cV9knAghawkF1IVlLAAMCl0Yo9tp4X/XVLc4PF03iEyyxMhZQPQ6+44luU5dOJ7adqQ6WDfr7Gt5eJ2xZA+ejt0aWOVGa21UQryxrQ/qnbfHz29hm7POz37vNvvM8Z4oczNFSkRemBYdlqm3bFanj867O/tA2C+foxjDp9OvuxoNRnvcikNTIajISVEa+Piz+pxm5FUNoqidqOYpaumuXteUwZ11SyfI1khUgO4Pf9hK5VSdQ0AAGBorYsSCyn+A9Ok0BbSJ7ZJAAAAAElFTkSuQmCC", "10": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABdElEQVR42gXBy2rbQBQA0DujO3rYsl27WbQ1FAIlUJps0kJWXeV7+n1dZtNPCGQRU4iDn3JkS5Y0o5m5c3OOuL3/8+Xyq4pjAABmECCBUWunzcvuDb//ur26u4vzXEgACoFs1uv586Mvtg8XM0yyNB0MkixhEK6p69X/vqku96+56TL1EYW3E1+p7ihUtl0+LR7+rnf74ubn/Pp3/bJCCT5mnVJIYrEpllztzsfDsm4wGhiO8NxHT1WWprEoT6fN2ulmlmcf5lcOFBGho6AtobRsOs9eezseX+STqSDvKWAIQehSHRap2WNqy1GKsh2t/5H/EbkO2bVJ+WwOjxw0mT5XHMdRXyxMsWb1DaNm3y7Wtt4Ib/uuO7wdh6NMYBSpnCYz7LavJ9q05/LUdBIxVpn2UXA8FOB0i5ay0aeb6WeadoaZUSkpJXkvMWkqhw2IbQ/jIVjFDIGYYglB8elsS+3RGO8YVwenNTMIZhKCAKC3ru3cO21C8HEg6vEOAAAAAElFTkSuQmCC", "11": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcklEQVR42gXB6WoTURQA4Luc2SeTpjXFopLiVmhBhOoj+Bw+qg+gIEopMvpDrTEkJulkMpO7zTnH75Mv3rwvilJriURaqjRN4kgRc/DDtmmgGo3SLE80rnc0Oa6ur548Ph11Jmz25vNNDUUavZrlsexuAV5ePHx3/bREjxrmFu/+LICI7BCKUmvtP375/nexjpVE5sW6d94AS2qd1zpMJzD/19782GWZEkr2PeWRVkUWKRl666QIkyOVlvdL83Wj6vFsiGKpkoQZrXHW+ZBl6IY58l6XlmBVVBGgt0lCgnjX9svWdIcgkfR91zZRniPQEAidZnZuaLaHk/EUYGcCazXu2wMcVfr1M9UZsW09mlAIePv8ciDx6efaxgjTCmZR3zCQC5HWK4sf6pX1wXgaHZdQ/x6CzYyRs7Oz80exM35AvK3vJGECMSybsNhgmcuLc1baI3skFmXs9ggsgYU6eXBqrf32y0opiJCFYCiygqzz/wFuVueOeJZEWwAAAABJRU5ErkJggg==", "12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABgUlEQVR42gXBy27TQBQA0Hnc8UzcuImTENqUEFWoEkK0XXTRBRsWSPwAP8BXskJCYluBEKxaISigViQ4cWZsx57X5Rx69uLt4cN8MEgTIUzdlJttqSsQlHOhdQunzx6/fnVBwMUQpZCfrr69e//xYJY9Oh7+uqbwd7n8/OWrnIheKnOmbn9+39Umhr2EJpy19PnlG1OtkLq+pIuhpDFc3+nKoVTpg8mcOed1udVFaY1OsD0aJEcjZZu23GhrHTBGhQDJeb7HTw5Gh5la144gxhAwRuj3s/n06fnxdF/EzC6NbjLZS5Wodh5jhFGmXp7PFhO1Wm7//LNNY8fj/GTe3fwuGGcw3u8pwPuiKLRZB1ZHzk0le7CY51QpWJWbD1c/EK0PmMhEm6qznfORUJBIoN35ujWCY4hIdNNaSxAp5choQALWJsyPnixmlDIAbp1HRMH5ze196xQExtKh6iCG4DgCChqc70hkfbANBReZSqd3a7/rLMFACEFCCCHWyqrp/gOZsNPJEWz8TwAAAABJRU5ErkJggg==", "13": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcklEQVR42gXBW27TQBQA0Ll37szYSZyQRwuNKiGBKvihUpGQ+OGfhbBEYBksABWhlAAxafwY27E9T86Buw+fnm/X01T21pVl7b0noRDAeVcUHb29ffHx3Y2Mtg/sy9fPY6fnm1dSKRZCPk2o7frvv+5nAnVZrcxhk7Rn2gQxA4AmVXQeze5Qmq4bjnnW1CZjAm3vR+QETFJgWDe+Oz2W+59Pwcjp4prwcrHyjJUjJ05SxWTC0SkIDCrrRPXXSuLySWQTBPAkrFA2EWGMkVGy/6eb05HzBICRNBqbnT/d87OOFlNBi4lqD7sMx3O3pdT2G87zEc0QFMIVa6apgYQ7X9VNij1wffW6vX6T82Wcbxerl8jAeLfLtbWOAkJ2eYHuZMusKvSPIieZruazbeoe9oKOjyZ+e9gu1xfP3i/XliZJiKwh8edQdDZQa9HqwUBMlPMYjXdI1NTutwbrkXyMsyyrh+FY+xgZgmHggofBsmE0/wFxPdSecnrlEwAAAABJRU5ErkJggg==", "14": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABhElEQVR42gXB2U4TURgA4LP858zWTjszbbGSCoSxxITEG0kIRL31IXxRngFvTIgoaopFUqGl0zL7Wf0+fHz6eRD5nCKjmraqpVKUEo0Ag5PlAqb78cd3r32ws+svi9/zZZ4ZoKQ/nkzSb3eWHh68Gbsq4Zq0q5ORFxK1yDaeR1zP31YGlquHi7+XezEEHKK9nbbVVd2qbHW/LHVwAFqpvHheW7Ql8MtzHrZlVkpXqsYayhVxONuN+gnmtjVZJXrdYNgJWIV60roW0/fnHz6dTfXTtud7J2dvX+7EPmbl8hkbioIBSQ9fDeN+EHaaVlHGvTgOOGNAAQimFIwQWio/dMPCmf1ZbCqRGDkYdTzNWa8LyOJoFPOjSbqffL991HkRDLppOq5YZ45GUNTi/rG4ubqjWq03dS30z39lUVbaFTYZwtcf2fVVYaVzfDTlu5Qaq5WcPd3WuYZWQKG0B4i5bE0UMgpjYohWoYOlqTUCoUg/elGXzc28sRYhhBHSQgZGm6IW/wEEIc77OpyXSgAAAABJRU5ErkJggg==", "15": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABZklEQVR42gXBS2sTURQA4HPua+5M0gxpk6aodSEiBenCRV101R/jb3UriBR84AOxsVLaTKZz3/ccvw/PL99tVr1tVU51CsX5yAAMWCpF79X52fOri1fHy5lz4f2n7x+u/+RMPnEqpm2VfPribYNokTHuRb0Lflx2Vcs8ODBay8XJmx83d8Pur/bfRB0QqlRSUPy3JyFRAJdcPLMLw8+lDk/suMD73fhYcmImte7F3HI/c9vbYdZ1U1K3rt3uMGZqqKp1z6d9mKu0j+b666921gdcT0HUIohJff7tP35JvXwUDzed4RNtUIeSm1ISMCsX6H4XJuQVqTS5Y5TaWOaCKJhJMFVmyKUebp7N5wemO6igGLjkCExKCdEZaaVdHh3iol9tVmXg1mREFkBqYe3r05eCqtXYLNQQoDV4cXZUSWyHoBJCxKJMSUSaFBFJKUmzj8IVUjFxqI0bwccAkAAAoQBArrAf4384OtugUZkfKQAAAABJRU5ErkJggg==", "16": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABVUlEQVR42gXBSW4TQRQA0F9/qB7cdruDQiCIsI4ErFhzGU4cVii7INQmJmD36JqL99T9l29t3bJwzgnJIyoAnRP4EM/TmV93N5L2ogjIVc1LoVHoxjs9TlawYFJICoKLipQZr6DEV7dNqtU0GmFiyMm5iSArpZAxJjoej9aB9T5xYBLrbG/9jBGNyyTMlmOClFnrt0zkh+HRuxkJU4zEnGMklpD17faKiandluM4a03NZkuE8zSziE0lIjAp1e3bFJay4HbXlIXe73bEUnUfTmPFyPrzp69KmRQsqayZM0pWmHF7euh5GNa+Lz/ev8e8FkLMvFwcUPXw/Wk4XTiEsE4mB7iWugZADwvXv102F+dCYGPM44+/v576d9edFtJanI8/D3/GxWC9YZtgzTiZ2FUVbWpqKnueD5eD8blJwIrw7u7Nstrnl+H530SIMSZdFihirP0PPky7VCKvQpIAAAAASUVORK5CYII=", "17": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABaklEQVR42gXB227TQBAA0L2MrzEmoVhCDSUVEjxwEYJHvonvROKpvEVCCCikRCVx4tiO7Z2dmeUc/eHjp8vFMo6jEMSHs9EKdB7Ekvi7egOvn759+fh9niaOu727ARMepe+slMi4zr9CEsflPM7nSgQeqjfWqigqhE23h+QUgbI+lMd+XrP2Jo100C4byGmHhjdoPHHPbmfY5Sq344KPxvrJktMoQcAJ1yKOVNXuudn+bbvu6tUprmIPKATEhG5Iui21P4we0J1xfdOXq4xXzAIqcE6ox6EXqi7KcpYCFexIe6zZg9VyOY+fXb8Ac22NbroDel2Rvr8zmxAgitRyWWTNvQ0EFvLqqhv7P7e/8MwiBKdm/PL59/PVLMsSYnb1v2O969uubmSaEA79dv1tVx8Kaw16AjDCjIht3zYk4I3YxSx9cqEkjOeheFBorVKW+nY7Hntwnn2Q7z+3EyKxWLNXSimlxtF1w/QfENPzfrCKz1IAAAAASUVORK5CYII=", "18": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABaElEQVR42gXBy04UURAA0Kq6de9Mv2ZoeiDRaCAR40IXbtiY+C9+rCZuCQHdGEEQOpkRGHr6cZ/lOfj29EtZlpoZQJSKhOCDSglEUvfccbPfmKwqy7nGsCq2RLDZLXqrQgjMmsvCfP508vH9a4MujlsQNPliFHN2efP12wWTSipfqwKz4GAajDZU9kRcLDZAnoEHtbr6634qG2lCY0wljBqaV2RmnkWSS2l9vev/uMpmHqfikJsjk7IKwHF0oWv7p8ur3d1Q68IR6RbXN7OXp0fBIwcXH+93m9/bNPhlXbCih9tH2+n5cR1czggSvXhCmLMTicGpA9K1iQICwt7L4MrFyRv7MN21k4g0B0uzV2xa4yzy2Pvz78+GUYTDlEuM9x3QjxEpkKqYojJ29mJZz4xOIs4Fo9lH/++pB2QOxLxXH394RwAuxHGyeTbvumFtb0NMDAj7q+Wv63ayNiZISRRhjMlFmaz7D9+mz7rNujlpAAAAAElFTkSuQmCC", "19": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABZklEQVR42gXB3W4SURAA4Jk5c/asLLIuUoOkJEZbLjQm3njhO/gQPrR6obYxQcBSocBu2fM/fh9ef/xSDYaalYBolQnBRRJBybnrWn7WjH0uhIgoTOqzQrw7lp3DgmlUMxMAofgUMMPdwRCCC0AAMYVSEyslJXokUZi1UohSkA0BsCghRW6e6sWrXA379vQPbIbCoq1SqqrJxffbR9aFMJ7mT4x3ads9eOpMMfNRm7TVyjDloOz99g+YbIu0v3oerj7M7+XTbtf/2N4ya91MXxNwBb5+zIpa63B4Uf+6WYbgubX919V6XJrF5Vsz/axM9qOpHFfaLXME7town755/24xa8bWOqXiwDRdHKyOy/1xy9Hn4z71HUclpk8IcmgfNr1dbfreBk59uPm2Pv3tXk4aEGFFKcOubdebvRjDLpMDZYCno5oUstY5xPPZHxIWGRkUzS5fOB9//l5nAAQUEO+jNqV17j/zps0Rcn2ItAAAAABJRU5ErkJggg==", "20": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABYElEQVR42gXB3WoTQRQA4HPOzO7O/iRpYrChCgpeiKBXRfoAvoivKyJF8EIFKULRqo2QnWR2ZmfOOf0+fP3u/fZZXzdWRSUxAmJDQFCS3P/09vnlevu27roak8j3SVTMi046TBO3H621reldcwHLzaKzbzDmfJI8Kd81Y+2MBUETaePx5flZV7v/afxxtz+EI54rFyDOAkUGtJ1qi7owZmVJfJzDrMzEhUtiZB799On6W5jidtGsWyQGYCRhzTOnmP0pfPj85TCOg6u2KweqhQux8JxLKpkIL57snKtVRQTmzKUIMasKAVLXt1eXrwyi9yFMmVmZhUjNo+bMNIPWA5qeqfO5ArvYuLWFylLCnrvl46fUDnZ/sELVbidT2P+9hbi3/iZc//76a/MHkRqClLJxNbPcjz4cZxszhKam5UoVsK4qESQK/hghxjlaUW1ad3P7L8UEgAoAACwyp+xP6QG7SdrXwIPplwAAAABJRU5ErkJggg==", "21": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABZ0lEQVR42jXBSW7UQBQA0P+rflW53Ng9uJGgY1AWBLGAVS6Qu3AtrpCDZJddhIjEgiQSjmP1UJ5qzCrv4cXVz8VuIyRnzmMIhBgYt8SSj+axo9X32n7bMonl/1YeTSbQiPz5Y4WelXeaSHGuIijoPyz6SnEGgZOQKcyeK05ZtPX4N5qXaXRCopQYE49WxLh6dIrSaPLn3zA8RLOXq5Dn3AWO7B1lu2a+IAieDWZojUSb2bhN73vOT4NCqWFGUkTn59VJG+cSTLnvNr0d232nt4VzgTABZ+V69VUkMgd9/3QHm2ZR9roo2L9PpEX5+exyrXIplJ1D/eXHzf216f8Ua4dPgZwNw5HtlpnmegoDC2Jm1Yy27UrnBDWH/tfNbSEF52ycpsE74yofl5JLcpJEOy3nKMlDAjeOGyHWoK31UolhCsRInNU1IAji3d4gIEBKgAhweGioH+fm5XjqR2ut8xHexJAOR/MKAurA5ltz2dEAAAAASUVORK5CYII=", "22": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABZklEQVR42gXB227TQBAA0J3dWV9il6RRMJdIAQkhkEAg8QX8EH/KIw9AhVRoSGiVNHYd731nOAfeff6yXK+LomQmkQIIZl0Kljn5w/Yvbt5/nL/9pGczigmGG+A8616A1v5s6m9fURalKmvGSqlcFevHjXzdNVUlf++ia0qEnIN1SNTq+FLuP3TdoggIYjkPxzZjjKlwrlJ0Wednab+IuputILF3KViPnBJHXyu9UN7d315t8bu5MAGutua6Z6SccwgyhyoO4HqbYc+vDg53PU+eMREFH53xE5vp9u5iKUY9nWxhfIxEyClbG4fTaGlUhMBi7IcHUzubKGaMkcjHe5L/VPGofZPdRPno3cJ7pYkxR+uGU9L6hxEo5sBtFNomC0TJGaS7m3z+CUq2T1dSilLrEKM9PFgXqqZEn4LjVCm9en6JSlZV0Z/GP4fjOTguAEHJzeaJMe7X9Y5BSICUCJSqm9J5/x/LrvGEr6YlYwAAAABJRU5ErkJggg==", "23": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABXklEQVR42gXBS28TMRAA4Bnbu968NmraUgriADceEr31zs/hp3JCCG4ICVKaSmyTJhvH9ow9w/fh20+f+1fXrm1BxTAJADReASvTfr1xzz++m928961DTv5xQ1XpxeuT9Zpi+/W7m0/87Vm7ytulB/Dzg9rfffeD2lDVee9MKYtT+GCxRwcGd1XGGBpiTxyLuCPLlx0/NLlfNNZOCOvI8pL3NZ9+1uyUycSx8bDCaNOYHu994j1067oQYkcVt9JeqfKwprAbT3F2dj3o+d/gokSHopNCq3SUKnvow8Wbf+iHoCdWLeJa4CsdhyP/wnPqlgXbQGVLORK1Ii5k+LZzbDxY20RSyVRrLliqNKKuJDo+Jdt1qCVDUpUKAGht4ZqyMw930/u7ZxdLY9AaU4oUrQbN035kUUe1zqf+8nI5mXpRGMeAiMba7eHAxE5Vp7PJn81AxKJQRRAQAWLmkNJ/KHLzEKAdZRMAAAAASUVORK5CYII=", "24": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcElEQVR42gXBzW7TQBAA4P0Z27HdJLROEEobESTUC7ceqyJx6pvAQ/IAXJC4cQAqAVXVkjpui+Of3Z2ZnX6fPj//eHq4yNOEhUdBpXWuEqv0wPyrqeHDyeby6LjIYVD0HWtl9Vl+kpK0Dj8XBZRJOsmS/YL7Atbl2+VRVaVle70rrh7LJAOK0jHdHKhhUdg0d7OssdImoYpEGCEwd4gdcReM98iggnfgXcaERgGyDBx7T81uJ2FwT4DRTDuYjSkiARsJVjsfA2Lw7d3dfQbzN7D0aDEKxNJMTsuz9csex38PcF3/NWzn0w2zJhKw1qzy7Hg2D5TAfmuZxIbVq6X//V+iQF+HH18f+oOE0ubbny/t0BhPN9vbSZdRVPbd5iIZtZnLPmxBFI8d+Sz2Rj2lu+j1+4tPMOL6dRVNAKNJCEkr0s394FMLLbNK9OrFTGldTAtjFFEMAX82V8wEyupldXhbPzqPVmullYgSEVLaOfcMMxXlbtA9Z3UAAAAASUVORK5CYII=", "25": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABW0lEQVR42gXBwW7UMBAAUM94bK+TardaBEIgJC6gcuIDkHriwDfwq/wCRyTaIiQOSGVLN6TNxk5szwzvwYfLzxfPHTlMFUWNQQDVnrQ1ufpT6OOF//T6QUL4eu8SkwveYni/W4nLl5sN9QG7bTwGfRUVXdidv+2fvOu9Hf/eueMNscIg5lseE9ud3W7PXsYGsFbnzzHuqTVNxUwquWIUuv5xdXi6jxtyd0M53FItLee2em+0m4c01Mdf4/euhzezlWxJFBeBxABZQhqMaaQC7FqxwoGkNC2NsE1j7lA5IPkYfQAVZUOKlsCekdW9EnWmcplFbUMxKorCXAvnxs3LSefmEUJYG9TKokpzkn/3ZVHHIZKScb0jlFyn6ZSKoevHeKz9emiWiJkRrXcOlEz1x4K0+s69eMZLidHNaXXkYrchC6Ly++ctnZZ1nJdpSuVQmwgYQAtggFnGh9N/m83b+WD2sycAAAAASUVORK5CYII=", "26": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABY0lEQVR42gXBS24TQRAA0Krq6p4v9sQmtgERKRKRYMcJuA3n5AIs2JEFCASRndgiGc9kfj3dVbyHHz993r166SzHGCDOCKhEZFwIcn848vsP1zc3V4mlrj3F7miQxFblahcC3t7mnGfpu6ttbtX4nOS1Zeq9umrdDPHuz55jlHZ0Sbq005PTIYkyB+Olavt6DpG917q1o4eClurB+eO/5tn5apztNEWWOIbmV/344OzQnu/eLEMJBXTUeRTfcxjPfv9lOPwdClCRy+vtJgWw3y6t/U6BSX0BpySpqwv8fT9rpBem0FiHmEJcMKiw1WLFxYLeOoMsQXoF8kKiwrPgZNZJVnQMVNr9YNhriOE8JVMgbjv9+sNkWYkIqoigCBDVhkDNBPz8NDRDt9tcGELLTAYBKXh/eKg1SXmMKjbNN5sksYsym6bZOjf7+eepl6gMTNv16vjY+GlGgyJKiKogROM4/gcyhNSq4KAsJwAAAABJRU5ErkJggg==", "27": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABXUlEQVR42gXBy27UMBQA0HvtazsPz2SijlJaVCFgBws2/A1fjdiDBkShVcfzIE78Nufgx89fNpojMBDSZ4RaJGZeMsvOrEDvd6n3P33wCOMvcQ/Lefr3GyDFbmD6jnTrXpEhfb1mcziv6FJ3fXrh7YJCK0vzCicvBG7OUUiUulG73D0G3spVi0AzqKadeHTWuQcVt8O0lVP9cRjhEn2hBtLrYNKyNHbt52Tmp79FtDlByVYIGkvqvM0XY1IWit0KuCWqKB9tQci0H/ubzfY5ui2kfR97lRKy54snn3ddZN6H07wEDhN4GZxbEyswyHo/CMU4+Ys9mWNT14iwzeHFRcMia9u7D2/NSRMgUiKG7ZHxw9w+NDgMIuiO78Y6S/qebmT/6d2bSTaqi8VJHlh1uXz9dlyyIkuS74dr3xBR5ClIyim6WC1ym5FiYUpPf0zwwZVaGKZaS6kQQmNd+A9vIMyghunCCgAAAABJRU5ErkJggg==", "28": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABY0lEQVR42gXBy24TMRQA0Httj+3xzKgpadI2RWIBaqVukOBv+GO2LBESC1ooacI8khk/r805+PD5i9GCIWRRlQSIBIiiJMxh8iCutavnZ0jOy+6FrVk8b9yRkEKzvmh2YqXsZfpt9NhH+TxsSyrGHf+w2me+lq2YPXKrl0xDZLoymkdO2VJlZKplFJbVqrm1YQ7gHjpct91xfwUDXkKAkIXBckdjjHPwy66jj/ePh7ub6es35u3ScLHKXs0DjMNAdNDw6+/Tkqjjy5gy5ChuNs11vXpKi6bYqej+ffc+ixSqgA0nMVv7MpynAh3k6OaekeFqp+GNqgYmROitex3ALSeBm0LL6bynIBt5/2m3TK1A5F3VhsJGZD8i3PJ81Up3UavNFoMRe/P2/bsPpiTwcas0UkTOWaGffd0nEjNWB17VipFkoTCQPGdGubhzej2TsCHZpA4n6x1RTghQgAoAxTTN8T8xPdk9Q2P2OwAAAABJRU5ErkJggg==", "29": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABWklEQVR42i3ByW4UMRAAUJdddrtXJk0yQCIkDoDEiFOk8C98OQcuCLFImWR6m3FXeylz4T34eP/VlhqFYFQxAgADCMUR0zYHwL0lM3/PcSPTHqEXYe5pyCrHqu+aO+z05cr8rorlydvj2HJS1TYcZeUT3BQtOg+WdJPxBYh3SJMsDbOSojKxMgFZlrLeR+JxOr8u8X1fjnPUbpPgRGa51+LGT2KlWomdLb58Ojx8PmilCmCUClMg5xxN7pTY6+LnOFAIRSGsVoMAvN7ZN2b3QzjtfG3C+fhtpSRCcMSx8HL14XFaLoEbyInWcT5DTL3FEgEZcJs297SwI6+glLys7pTD9cv27nB7WSoEpVrT+YyzlL8i73XuDIa66W5f2T8NjtXb/v5DLWIVWSqlBHNKprJ/yS5pxbPUj4BtCVuIACiAObICnk/r8yUhbYFyOzyvRJE5iv9C9Dy78A+SeM1fKiDHPQAAAABJRU5ErkJggg==", "30": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABT0lEQVR42gXBwW4TMRAA0Bl7bO+GJLtJRCJSISSQ6AfwNfw0V9pbkXoAqrQ022zs8XiG9/D22/f3fQbAC6zMtLnghb3M6Nq5BFp3dfF6p8IXf2hm1XVu+h3w4kK3Hr9ShMqZIU+jz9Xw6t95fjVlRZ/QKNWrF1HOXSg19l7OwXEBaLkAMxFYrwwBxVoPdR2J2ZJqIcsOaehoWIXzNaDA0MUP28PTPL/8O6EqOnW1VEJYgAWu6Gjz+cv+5mMDqmaBjMCURVqt2cy18uv+xzSxk9LFRfPBYYrH/Wo5JAiud7PV5+gmitZQRZQ6wr+ny/O5LMEkazboY9oNafvp8PCWyIvVGcH1TG4XVNReZhr22zTuUBb0CPvxuLk5js77xpy8Two+0c+n+c+b0gSpxrTqInm4qvOBVE0aPJyNBUnAlsPm8ZQ5s6giNAMwgFwxl/If8wbMD3R/xNEAAAAASUVORK5CYII=", "31": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABUElEQVR42gXBTW/bMAwAUFKibVl2YjdI2xW79LDrbgP6Z/bXiwEDekjSZEnt2PqgyL2Hv95+71qTOLKgJ0toosWQGEUvUentWz2ux8v94yx+b70wriqcAymM3QulvFQybSHc0WQpjNpRMziM2JSmp5BKCUEQfYWNZWyduJ4FxTQZKkrUBmtX5jgdosWHrb8ejxIyVL7swbg82dtB82o0v+62j35oOKGsnJYUg8k5A2FlYY7yqc2yeXT9kAGtUSxCAVQa2nt8n+Lf8+lwu+JyNyWDVauFMKUOOKb44IiIBQDqotlsCWZAemnN+Dm/z0sH+oG16wyAHQf/9Lo7TY5U6mvetIS5yKz1v1h7csNmhP0TlJ7+VM/w83vn6orLD4U1ZoPQD90p4cyRloqmvr6DMKIAZjCqBo2kWK4r09fCl2Uz39cYoioIAGix58JcblP6D47e0Y1NbBfOAAAAAElFTkSuQmCC", "32": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABi0lEQVR42gXBy27TQBQA0OuZscex4zahNYmVqM+oEo9WaumuCz6Aj+AXYYVYwTYLHpWoCiSoqzZO49rxO57xzOUc4+zq/d6417Vcbeh6U6/zWMsWAYDQJFXs9PXo3dtzXtaGzUqiPn/5uFmGulXUf+55Pfrq4tzmWTj/22SPfJtTUh5hEzDoH4wkdInnWqKK/v2aJrffcL0cDwOhKGjSZ90umIxWGlHs21abpNMPn+6RpFHS75jln1XrHLDrm/k0/j0kYpmVlWgNi4OGpwI1WrY/YHlZr6JsISuN2netnS0zrxUiKGCEUkZAo1Jti9suvZzsnr3YnS+l1sRgvbh9xvq2abi845mTwdblycQ/PD692vMcnsbp1+sF8z3v4uQocJxgtLP/5uXw8Lg7CBBVUcgfDz8ZMpe5Y8NzZ420cmkmhaK51fHC+0WyrlkiraLjc8cWSn+fyVn4SFkCQNKsuLmLWIH4pIQQClEJqegmMy2OgHHSrMqGNQ1Wkkdh3WyE0hoADCIBQAiZFeI/yxTcpvOQNmwAAAAASUVORK5CYII=", "33": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcklEQVR42gXBy27TQBQA0Dt3rh9jOyEJTYSEhAQssmbTBRJdIcRn8J2skFiCqu4oqEKgKhQr1K5jj2c8D1/OEa/fftg/XxIRMCAy4QxswbMxfH1wdHG+e/dmb00CIItCLLKjmn/G37q9xY+bkpQqdtunC4MwTsm6shmhqaMPfpxUmtIM5v506fNSLFSeP/HhAEnC+5XZsbtyFCCbcDkRIeaj8QKXcVaguNGdFR0Bnnl81eo+UduTl84ZC0qyu/n+tTtZeX7xXkj+dvnZzpjn5c3VJ0Z1r13fT/3DQDOgkFm1fbnYPsM0y4oVx/7P9ZeyOEMRyDpfHw926LK2blpw3kA7Kt2WwTZhRexN0tfkxrwxdhofJ5BiTptHdjAhChqDVJsX3umOcZZLqqoIENbWJG7oBrr7cVfoKZURERPCOgxFkXkfRxv/3T5Qp8dfR7EuAwgUYvY+Vq4IIdQNdNrQFFjI9G8bzWSYgQHkUTPP1oEe7X9TuN+x5XIBvgAAAABJRU5ErkJggg==", "34": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABbklEQVR42gXBy2rcMBQAUOnqyrLH9jycaSgJIdDSQCCL7Eoh6/5E/7ObfkPJpmRTugl0SOLG8fghyXrdnsO/3H27OltLJVMi5IynAH5mIekAv7uAd9fbr5+vWNlol/Ylirc/+HhPnRtM9aOUuFJy35zs8pqRkApG1sQDAQERX6kMw9S3P7/Pmw0vtsX2JBweyHkqaS780noMmHdq/TJ5vtiKTA47WWchBu18POZosu39CJPWuZQXALVY55GPZlw8GVGh8dS2vTFWyQwBnhmUpF+HyfngcA0EqDZNokQcPOf/huNLUFN5EevzyCVIiefvdhmn3SqPfhEZWCzLj7d4eZtUhVbP499uGXsL3LFgo1+o/7Q/Q8IxJbTWNwquP1xKBKVyRsyRgPn1OM5mMGLT3DwdhkLVmaxnTUKU3vGu1b8eDv0ccXIUAq+Mi8XgfJzABeefj+5JR6kSMgHvT09H698ebUwJIDCKLjBUyi7uP2zr2zqavRznAAAAAElFTkSuQmCC", "35": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAKCAIAAAALu/iQAAABdklEQVR42gXByW4TQRAA0F5qFm/YnsRxEqI4CCEgiBPiBAck+A7Ej/IFwBUuEJTFTpDlsWfG3dPTXVXNe/Ldx8+f3uZacy+HrsM81yFQkoCxCJCS75RKA+PX7xZeLLIPr7tfV+by6eDPMrw8Tx7K8PgIft/WxXhkyt1kOhkOuuW6rzIIfVnp2Da7ChCd7dhHFYIUMUuBWj8ZpMNU5SlApBiM26ybbVOYutybXtOC9/HH3+aSimrVnV2MUlEzInCMXRvvH9yy3ta77cnp3DnctsW3n7u9K/qb/cWq1IURlCtGloRnx/NiPLUtXt+sAfpCFINe4Rz3podaE3kiZIhI0ePzxfFsMWezdZU/DG7m7KvzgyRLHnGVKxtsIIpgrLxeJk6aq+qf8aN8mAAIj+BdbCu6K6OyZpK6Zs/yzfsvmqxHQqnnB6NnT06zBIjReb65W9+uNlpQAkJmY7A+Hs1O2LSSUWeqrMsYpdKMJFjHdDhmFF6wb8N/7RzwUtHAIJgAAAAASUVORK5CYII=", "36": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAKCAIAAAALu/iQAAABe0lEQVR42gXByW7TQBgA4Jl/FjtpmjixGhFatagECW4IgeCEBC/BG/B0PAJHrlCpSOmBFLUBlKU4ph7Pvpjvw6/efXzz4uyoHFIgIQSUbPDWet8BAyAhkP16q7RdrP7R01nx/JyfHwWWGqk0uMoZpwK0qMDQscE8PhiKjvxVFzQ6U6+WPy+/HSSFseuCq2WegANnHsV7srCs+H5btWpMZdPcXK3W1d0Y6Zx3KUVtFOQcUBTGH5b3HS2wBIyHlODYB5wfUEb4IENCBisjMh0C5AlCEELb5BJYz9Py+Ozl2/dl86XvN1HXN78ace3oYdEfwcnU7+zMVb5LInhKMcny8cng9AODYE1bPtzMJ4vyydPepBj1yUxQKcwj6T99vqTehN2fuo6ag7dOc5aNHr+GPA+eVlVKwuy2++u7yllHl6vN7e8tEPxsfpxlrJfbPOPO7znjCUEr5NeLH0IrIBlV2kynE6311XJNGS4LlDGMcHIO6gYbH1XoEnBj7H/ELd7VFA89+QAAAABJRU5ErkJggg==", "37": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABb0lEQVR42gXBW2sTQRQA4HNmzuwt2SZbk1YoUkVKn3wTH0RE0D/i7xSfBd9UUBHEhhbSNpsN3U3msnM5fh++/vDx8tlMSAJgJUAKK1NIPlqNv9aO3r1cvn/74nCgPCsmEzuXP6dh7Va+XdGnRUmzKp3NZCEVAmTLRnFZusKQSkrWBVCuRD31zYmM0Zg4SHnKk9PqVXZ0EfDzD2JZq/pCVg+2X226qzE8OZo+nT86D5QcXhMEHfqvo769H67vhu0xdOxu2v5+5xfOBeKgof8WYAvDbjrYHPcqn6tsX+VvkJliGO3ujtNDyehNjOhs0pWyJBGARRjD0EPCWkABnKFoPJw7eo4oOHoC70dTaA6YpMKMfWLfejcM43epBZkR93uhAggQiCm4EdgB6uEgrF3Sl9/iz9/y7ORxM5/kShhnlSDt/NVNd2slbQxsNW2Yl8FVBXgffOS2822HLJAYsFkcG+P+ra1AYI4JQowxCrLW/gcQ7tnTKh+ahQAAAABJRU5ErkJggg==", "38": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABX0lEQVR42gXBu3YTMRAA0BlptJK8u1ljThIeIaSAQ0EHHTT8CL8KX0ABDZ0JBcTHBLCz7EvSzHAvvn77/upB57xTFkTRlLQkLMxK3/4u9OrZ5t2bl85HUCAsx+vPaferHtFw/BiIKiwnJp2psYVLE7JJBtKGorXYlorS2G8/fdgjqypbkjzxPE0wFxP+5TWVlG9//+khWwQFAEQVVsgLctKWJqQvN6MrQ+OALLHIknhS0Kr1p44Wwa/fb0I+Pu1ijKss0A/j7m7SsH6+fkEqylxa71ZV+LE/jAJN086pV5MVgMjgvdpvovUxun6RLCZG4yohYlEyaC4ePzo7MV0dsG2b47AUPT0/R1+rMC2pVApjX6xwZUMboFbpghZwSym0v6N8vN+t/PrywhtLSzYWt9f728NgTaCRzWQbsfYA4iywE1bcsT2or9kQWPPk8uEwzdufs6oBYFVQ62NN85L/A/ULyxibJUtOAAAAAElFTkSuQmCC", "39": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABbUlEQVR42gXBz08TURAA4Jl5s+9HWySKtJQGPHogxhguGE/+I/6zBA8mxsSDeqC1TaQqC7aU3W3f2503fh9evP/wYuJ7TgEQFAAQEACw2XWLZctvX+9Nhma4nwiSiBARGWrFlWs3Phzw+Ll9d/7S5rWnJecHIMwQGjlptHf1eU7YJb+bufLKogs8COiNYnF7aesppJpRU6AoR+c7mhSpAMnRR56M+tWCQUnVkD1w1mJ9nVHUZRN/BucL/yyjIdGQaKKPN8Em40owS9ZmezuvdBhbz7K9f7wp1SZ7+EbFKHE0Bzl+T82WJDNlsdLkwVmzWeXNLPRZzDHuvcJf3zQiS9rl6q6QjxT20/hCjTHzS9Nw+9dh57mKVP6j6OsiYLP+Im3qd5XW/HAHVWT+dN37+uPp6ejJ6ckQkGNKwRW//6yms1XjiO+jkbZHYruqk5xAM0Upt900GlZkIBodH21iXC12OWcABSARY6zfxvQfgtTNuVEzHFgAAAAASUVORK5CYII=", "40": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcklEQVR42gXByW4TQRAA0Orump7V42RIjBG2lAuKlEjc4UQk+Be+kX+AW+CQBSEcEy+xMxnP0kt18Z74ePX1fD5VKJlZCREJpYjJO2Ptr9UOP71/9+XDZetb7ylFfapHZW3devVUb7+VBRY6en1cjijmrhNJAjpPenKus4ddoXLEwdPtOhSxQHRJpB8b7klUb6K0hL+PSMRgKXSeJHTWJi25AFIpijMSAjnXZl4RU9s0q+0agyyL8dFpBZEOywfsBVwv/6x+35u2flovhdJvZ2fl5vjs4tJEEgcz3Nwu76+/J0KkUZymcr9Z1Pt/1WzqyaF31nUvz7sNmz6N1CjLj8rxyWSSSFYAyINPPSsLKkCJ0UipDDiRAgbjeoOmPsxE9vniSikRoYTAUklgtfixeN41+HOzvzPDfFqNyzxLtXUOFdZNd3fz0KPGJoRegxbdgULBGCQFki0MW+l9QCSQr04mL4PZHowQHpgABAU2HA/G/AcjKdPcBW1AegAAAABJRU5ErkJggg==", "41": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABbklEQVR42gXBTU4bMRQA4Gf72TNOnJlJgJRWXVSqBBJHYMOSQ3BGLtALdNdFVQkWVVW1ajKEhDDMr39fv49d39xdfiyUUjFF5EyQZ66nSNaLh2ePN1fl7fVFyk7b0a4rpbufuv4WD+mlL74YgToTK1NUHJNAgTKYEkWKkfnEcqkQ+kP7456ZCuclLT/Fv19Fd6QMHIY4LNGHNA6jiAMfm+STslPiWRTURu8BMM3O7PpczwXPjSepq3dZLt/6sd034QjI8gWu8qzSQ0/10+sLuQzDYO2xaR07w7F9/f390Z2X2zo81b4QKM0My7JYlPxN4jBMv7ab/Z9NvbNgZeBytVyID6v56QUwjjEk8uiTM0oozbUAsYgna8M4T95j305LeYIapQFOwDiELKt3bnre7HaI21HD7PN7UwEASjEOk0LFCJrO/esG7ACnmaijF5yY5y4FRYwS9Mm1gaF1NCVz2E/WWSCWiDiLAOBDbFr7H10Az2idojfMAAAAAElFTkSuQmCC", "42": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABgElEQVR42gXBW3OTQBQA4HPYA4SkhFxICqt2sO04fahVX/vgo+P/8Ac7+qCNNkmnamjTEi4JsNx2/T788PGLP3OUaqERSGYNVLdS0zQhRJoU9Pbi1elLOw5vfRDGnCemtwy3VVmEYeJOe3TC+dWFdxOvA2LTsdWdnvf09uevKHm8H4590pCZaDpsAPvd4c/GaO0XugHBiSwLoWwS+SH+9n2wupPxtjETtdiYPRv4/IyPf28qdhlcWouvxnZLWdENzYYBLEM4pHJk7yqkKo2zm6Uo9haR5bnyLJhyA1a35nOM5BICilYKhg2f8evr46t3pjVw1ossSf5GSDCe4Ps39lB3/HlH5eFhnbmv7XngHePoxz8ChuefP3Fvous61hXrVJfnRzU0PlcdkGKUFK2e5Dp2/f6RrvVl13RSFVG6L3K6u99Fm53vDieOpQBAaohaXTXPexFmOaVlnSmoKMshl6pFRKbRY9Q+xUKCRhJwNhuVZbUKhVQAAAht00GrNFGJ/za6y1hFdbfUAAAAAElFTkSuQmCC", "43": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABcklEQVR42gXB627aMBgAUF++3OyQC6HKgEK7SdU0af/2MHv0bqqmtQ0UKAtNAtiJHds7B3/98TNmFCFLKfbAQ8455IKAGIOOzQjljU9RrYc+DLwbngLG0spFaTCGx00C69WynN5S4gCTdNBlPGl8k7HNqIeTTGGSpPf3Mzv2p391FCeUQsiDVoddfyZgAcAPQiYuik1SL46v1qZFMVqL/Saq30nbnve7g5DDan3nCKm7LuKcM46MpZSSy7mrXitjHWNRluUR40rp/WZ7FUIbQ7RSnDGPYHGVhHpplh+Px+Zy5kkWMQ5pkiwX82KWfzSN0rqXIp8Wy9UdQtTbCZjOis8PD9YoGFQUhuV8oZWqXp4Pb9vj7gDv+8Ofp5hgM1/eFkVJkSfU4HtMXPrm1MLLc139fiPO5dP4+7cvFOjjr78fnZRycH4AQjkhDcYjVm11enUO1X29bYzSOJ74gChZrT9dhRRaPVUKIaRHFjAExvaD+g86y8qe7tg8aAAAAABJRU5ErkJggg==", "44": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABYUlEQVR42gXBzW7UMBAA4Bl7nJ9NShdEDwgQe0Bw4cLfhTOPw0PyEEiAkKBAu4im27Jx4jgez5jvw9fvP+x2D6vKIEABROsUDHLKIXy/GOjVmxfv3j47wWShZOPkztmCXXP+Ay7OP967S23tnnTto7ZzxkQ0e6qv2J4eD24cejqhxVSfpfcGFd2sJkqTivHPX5YHu+nTF8pJx5V/jYp1I2DRKAujtbFquCBZSMA3tum2LRsjIjqFkEXX5I1GsiWv86wbq2kqJYWYRh9EIUwRciSVwlyWUCB7F34fvef2MQvEhSUXUgXUAmlVLhXr8HOft7VxmxhjlkxaZNvSWfHrNN1m9iHf/vvan943RDkl+ns94bebriERq8UtzVNbKQNBLofxD837y5hCv90Ip37TUkoA4IjGkNbrgaZ1vRqPSOMS48zVmtiRJVtdDuKXSFkK1fX+sIRFEaMCIAiCxCRziP8BweHyh1/bkuIAAAAASUVORK5CYII=", "45": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABgUlEQVR42gXBy27TQBQA0HlcO3YSxU4cSosJbWlZINiwgKrdsEP8B9/IL7CoEFIkQKioCDVEzauxPX7NeGbucA599/7TSToOuI8EEbXSKhyOCMWqKv8sBFy+Of149XpsDOFs7+TtzfzR7Djwq91KfrY9QFXku1sejYzSmcjW6+VBepiE0npV4BOwshTLnd372Ml9UUGji+1aVfB1nuWiD9QZolt0bV61X378O5rEm+8/n6RH1gEAA22cNjjynAfQKnv9a5E+TjaicwwcCfjh7BUw8/LA0yzIGk3QAkAurXGepn3Qjj40aoXxJn/4dnMnNZlOA+bzOIo61wefkyEQh7quq2jgnaUv3l5cPJ094xBczxdwPoUPx5BM8PkgPp/yvyRNxqNhGChLES0IEv0mSeEG6JMu6WL0alG2VVs2Zrct4O5eeRa2E+4coaynFBpTh/0gK+rlqoTGmNJJWRhtre/zttGM055tRS2F1CCVE11YZ7KVkhJmHVJCGDWd0aLs/gNzROzEOlAp7AAAAABJRU5ErkJggg==", "46": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABbklEQVR42gXBS24TQRAA0Krpmp6PbYbE4AgFJYAiIIhFjsBduB4nYIFYZIWEWCIWfEQcQow943FnPP2rLt7D52/e1seHuSYAQEQEAEk6pNzHm9uemteP+XyRqhwANGU5Ivrwam1OtsPHpiTURDVRrYETZqALPYn6yLpp11aaSAmUou5xRbv2uJlenJzNyvLm4fo9Yvuty1SC2mvzG7afv9c/r54FOXKxRrVD5VMkSFwgny6qRX3+8nRe1vW/cfy12TjrgIV88HduuHhx9qhYdIO5XC5Xdr80dySYWIhDGkc3KahRWTOdPVUUQcYYv/xZffjRkyRO3udJ5vODMs8BxBijkkAIwkyQxI3uuu0qwKaqNCkQ8JhdbzrrPPE+DOv+3eWnikihTChvqjLLsq9Xf/3gqVzvHwz0BKdlITGytyNmxvo464bdPpLzidn3ph8toCRO7D0bK+0uMSMJ4sHh/dXWBW9FQABEgBP4ANbZ/xEq3AwRunZCAAAAAElFTkSuQmCC", "47": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABMklEQVR42gXBO45TQRAF0FufbtsQYCQjDSKGDDZAwg5YBEskYhlEJGQEoNFgZD/7fbq76nKOvP/45cPb17u9GwBQBQmAXJbx/ecff/Nw+vzp3YvnpRpUWRUJttb/3cbfafNdsVfHZ6djLYp12xQspZBRythVV2aaobiIkH1whAqKm7oC8ECurd0Xloh6nUTQTOnSe2MOV1Igmclq7eUBiVLVVdxUAAdDGK4mQppQVXWAGtGT4SNi3tbDxl1qZkA5moLRRoLpzDCBElV1QAGYCqiKDsBN9VC8mIAUolQzCEEFMsJHb7+fpvtc99WJNLPiYszzZSXh91v/+u3Hw+l42Bdx1cQ0L7WWx6fL9bJ5iM7Wznk/jJohDixsaO085jXha2eT46/HtW0TAQAkALTO6237D2jxvvFt19ORAAAAAElFTkSuQmCC", "48": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAKCAIAAAALu/iQAAABjElEQVR42gXBbWvTQAAA4LvcJZfkkvaarjbYFaXDso0xGPphIPhT/OZ/9ONAvwxBfEEZQ8Rat6xZXpq0eblL7s7ngWeXb2dj7FMyHQ8n4ST9+xAezR3qKKUMLdqqABDUXF5d3+NJ4HhmiauYdA/HZ5OilSfLIaWk3OYWVrys6XBQaXQfj7DP2Ivni68f3q+SmM1mF4djHWebLFv/+dV0koXzw1Nvk0R922Fiu8HTOSCkEN3Pm9vlk1e2FJCYBrHzTRTxImF29G+XVwBrADvVR4+p49MGo3WaKSUYG2HGsnX86duXQVrYjrHvhgYEAGNDGeZjXnlBECVZskm3ZdFo+GyxaDu+Xt261HVcipGhfcc6f/n6x80KudOP11d3zJ3GiWl7YXBgYSx431R1pyk6Wl66BihzLoWkNq3znPfwbpMJrgeWI4Q0MfHpAdcWvHjzDgCFkXF+OldKYy2VVpaJOylHHi2r5vP331UlTcfGTSvC6Uj2fL+LldQIQQj1bg811E275UIjYqO+r1v+H5Om1d/SbUcxAAAAAElFTkSuQmCC", "49": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAKCAIAAAALu/iQAAABf0lEQVR42gXB24oTMRgA4CR/5pRMZmd2paBsQVy3SK0g9sI7fRjxMb3wShBBEDyxWNbalXbdObVNJjOTg9+Hl6/fvFicCx5jhKz1ehgRRgQTwRkEgZTaeWcs/vRlRaf3i2ezyekJAxrc1ern9V8SkixMlotH3vv6oLDHxsNteaCUQhjSKKRxwg7NPrHHru1udJhnsTU2ZQm1bvOvlMeWjsPQ1nWOxt6Mxz/foFxXu0aTdGWq9N50awxL+Gp93UlPsTN0VGnx0ABPp083inz9/F5227u6eqChLMuLx/PzU9FKDZez50Xc1bKXvdmsf/+4+lVXuzwTl/N5p/bbqgJsXy4ubveeRmFS5OLdh49nIt1LebPZRlHCGcuzk5wzhwgDk8QBAKaEBIB4ipkIOA78WSziiERRHPQ+F4UryKi7puy1Nnj56i0g2/fDk9k0E1GnVCY4AYIRMRbXjfx+taaEeAio0sNkUnil17uGt5Ayp0dFAVmLmgM6Kuch7J3rlf4PL9/Mawy7zOQAAAAASUVORK5CYII=", "50": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAIAAACZwRr8AAABaElEQVR42gXBy2oUQRQA0LpVt6of4zx8YGIEERzIIhBEcOXOlX/iV7p17UJQQUMwTMeYSbrH7q533es5cPbu4/OTYy0zIhApX/TssilJUeyGAbfb7Yf3rzdiMgqgbn/8lZ+/9Ke2OxKHT/VS+gzdPlAyNENw4u4QYwbUoBRLlGit//rt1/Bk0fW4wQvRPExF3NfTNa/cZBE5rsr1MteQNmu4rdv6oItOV1QdExE+aM3b8xezp3M1SbFBSW+ewa07Xahs9qPUijaNNEAtT0YUjHYJ/wCogoAio3Pu+8Xl7KHRymbI/r5StPe6s0MIlSw5c44l+rbSzElxCd4mO0kgJkYtyQSvSR/GfmU0RDf5oSlmocINA46j3RkxFkad2yYdeleiYJQ2YSqM0YWfO3r18kQpYaSqK2jXppC6vPqTckRPYiYB/fh4LQxBECUx3w28mzKgQlby6Okj58PvGy8YSLAUJRUBiN77/+Gu4Hn4ngUEAAAAAElFTkSuQmCC"};
+var TOTAL=S.length, LEG=S.filter(function(s){return s[2]==="L"}).map(function(s){return s[0]});
+var RN={C:"Common",R:"Rare",L:"Legendary"}, MAXSP=9;
+var have={}, spares={}, filter="all", spareMode=false;
+var me=null, pin=null, players=[];
+var LS="tecb-checklist-v1", LS2="tecb-spares-v1", LSU="tecb-user-v1", LSA="tecb-art-v1";
+var ART={};try{ART=JSON.parse(localStorage.getItem(LSA)||"{}")||{}}catch(e){}
+function artSave(){try{localStorage.setItem(LSA,JSON.stringify(ART))}catch(e){}}
+var HAS_SERVER=!!(window.google&&google.script&&google.script.run);
+var BY={};S.forEach(function(s){BY[s[0]]=s});
+var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+function $(id){return document.getElementById(id)}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function pad(n){return ("0"+n).slice(-2)}
+function tec(n){return "TEC-"+pad(n)}
+function mine(){return Object.keys(have).filter(function(k){return have[k]}).map(Number).sort(function(a,b){return a-b})}
+function spareObj(){var o={};Object.keys(spares).forEach(function(k){if(spares[k]>0&&have[k])o[k]=spares[k]});return o}
+function lsLoad(){try{JSON.parse(localStorage.getItem(LS)||"[]").forEach(function(n){have[n]=true});spares=JSON.parse(localStorage.getItem(LS2)||"{}")||{}}catch(e){}}
+function lsSave(){try{localStorage.setItem(LS,JSON.stringify(mine()));localStorage.setItem(LS2,JSON.stringify(spareObj()))}catch(e){}}
+function status(t){$("status").textContent=t}
+function live(ok,t){$("live").classList.toggle("off",!ok);$("liveT").textContent=t}
+function isMe(p){return me&&p.name.toLowerCase()===me.toLowerCase()}
+function others(){return players.filter(function(p){return !isMe(p)})}
+
+/* ---------- cover ---------- */
+var tickEls=[];
+S.forEach(function(){var i=el("i");$("ticks").appendChild(i);tickEls.push(i)});
+function renderCover(){
+  var c=mine().length, legs=LEG.filter(function(n){return have[n]}).length;
+  $("count").textContent=c;
+  S.forEach(function(s,i){tickEls[i].className=have[s[0]]?s[2]:""});
+  Array.prototype.forEach.call($("stars").children,function(sp,i){sp.className=i<legs?"on":""});
+  $("legT").textContent=legs+" of "+LEG.length+" legendaries";
+  $("nGot").textContent=c;$("nMiss").textContent=TOTAL-c;
+  return c;
+}
+
+/* ---------- album ---------- */
+var albumEl=$("album"), slotEls={};
+function buildSlot(s){
+  var w=el("div","slot "+s[2]);
+  var b=el("button","tapper");b.type="button";
+  b.addEventListener("click",function(){tap(s[0])});
+  var f=el("div","face");
+  var cap=el("div","cap");cap.appendChild(el("b",null,tec(s[0])));if(s[2]!=="C"){var m=el("em",null,s[2]==="L"?"\u2605\u2605":"\u2605");m.title=RN[s[2]];cap.appendChild(m)}
+  var st=el("div","step");
+  var minus=el("button",null,"−"),out=el("output"),plus=el("button",null,"+");
+  minus.type=plus.type="button";
+  minus.setAttribute("aria-label","One less spare of "+tec(s[0]));plus.setAttribute("aria-label","One more spare of "+tec(s[0]));
+  minus.addEventListener("click",function(){setSpare(s[0],-1)});plus.addEventListener("click",function(){setSpare(s[0],1)});
+  st.appendChild(minus);st.appendChild(out);st.appendChild(plus);
+  w.appendChild(b);w.appendChild(f);w.appendChild(cap);w.appendChild(st);
+  return w;
+}
+function paintSlot(s,w){
+  var got=!!have[s[0]], n=spares[s[0]]||0, b=w.children[0], f=w.children[1], st=w.children[3];
+  w.classList.toggle("got",got);
+  b.setAttribute("aria-pressed",got?"true":"false");
+  b.setAttribute("aria-label",tec(s[0])+", "+s[1]+", "+RN[s[2]]+(got?", in your album":", missing")+(n?", "+n+" spare":""));
+  f.textContent="";
+  w.classList.toggle("art",got&&!!ART[s[0]]);
+  if(got&&ART[s[0]]){var ri=el("img","real");ri.alt="";ri.src=ART[s[0]];f.appendChild(ri)}
+  else if(got){
+    if(TZ[s[0]]){var im=el("img","tz");im.alt="";im.src=TZ[s[0]];f.appendChild(im)}}
+  if(got){
+    var ok=el("span","ok");ok.innerHTML=CHECK;f.appendChild(ok);
+  }
+  f.appendChild(el("span","num",pad(s[0])));f.appendChild(el("span","ttl",s[1]));
+  if(n>0)f.appendChild(el("span","spare","+"+n));
+  st.children[1].textContent=n;st.children[0].disabled=n<=0;st.children[2].disabled=n>=MAXSP;
+}
+function secCount(sec){var all=S.filter(function(x){return x[3]===sec});return all.filter(function(x){return have[x[0]]}).length+" / "+all.length}
+function renderAlbum(){
+  albumEl.textContent="";slotEls={};
+  if(filter==="missing")return renderMissing();
+  var sec=null,grid=null,shown=0;
+  S.forEach(function(s){
+    var got=!!have[s[0]];
+    if(filter==="got"&&!got)return;
+    if(s[3]!==sec){sec=s[3];var h=el("div","sec");h.dataset.sec=sec;h.appendChild(el("h3",null,sec));h.appendChild(el("span",null,secCount(sec)));
+      grid=el("div","grid");albumEl.appendChild(h);albumEl.appendChild(grid)}
+    var w=buildSlot(s);paintSlot(s,w);grid.appendChild(w);slotEls[s[0]]=w;shown++;
+  });
+  if(!shown)albumEl.appendChild(el("p","empty","Nothing in your album yet. Go to All and tap a slot when you stick one."));
+}
+/* Missing: information only — what you still need and who has a spare of it */
+function renderMissing(){
+  var ro=el("p","ro");ro.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>';
+  ro.appendChild(document.createTextNode("View only. To tick a sticker, go to All."));albumEl.appendChild(ro);
+  var list=el("div","miss"), any=false;
+  S.forEach(function(s){
+    if(have[s[0]])return;any=true;
+    var r=el("div","mrow "+s[2]);r.appendChild(el("div","n",pad(s[0])));
+    var t=el("div","t",s[1]);if(s[2]!=="C")t.appendChild(el("em",null,RN[s[2]]));r.appendChild(t);
+    var who=el("div","who"), hs=others().filter(function(p){return Number(p.spares[s[0]])>0});
+    if(hs.length){who.appendChild(document.createTextNode("Spare with "));hs.forEach(function(p,i){if(i)who.appendChild(document.createTextNode(", "));who.appendChild(el("b",null,p.name+" ×"+p.spares[s[0]]))})}
+    else who.textContent=s[2]==="L"?"Only 2 exist. Keep opening packs.":"Nobody has a spare yet.";
+    r.appendChild(who);list.appendChild(r);
+  });
+  albumEl.appendChild(any?list:el("p","empty","Nothing missing. Bring your album to the next event."));
+}
+function refreshSec(sec){var h=albumEl.querySelector('.sec[data-sec="'+sec.replace(/"/g,'\\"')+'"] span');if(h)h.textContent=secCount(sec)}
+function changed(){lsSave();renderCover();renderDeals();renderMarket();queueWrite()}
+function tap(n){
+  if(spareMode)return;
+  if(have[n]&&ART[n]){viewArt(n);return}
+  var s=BY[n], before=mine().length;
+  have[n]=!have[n];if(!have[n])spares[n]=0;
+  var w=slotEls[n];
+  if(filter==="got"&&!have[n])renderAlbum();
+  else if(w){paintSlot(s,w);if(have[n]){w.classList.remove("pop");void w.offsetWidth;w.classList.add("pop")}refreshSec(s[3])}
+  changed();
+  if(mine().length===TOTAL&&before<TOTAL)celebrate();
+}
+function setSpare(n,d){
+  spares[n]=Math.max(0,Math.min(MAXSP,(spares[n]||0)+d));
+  if(slotEls[n])paintSlot(BY[n],slotEls[n]);
+  changed();
+}
+Array.prototype.forEach.call(document.querySelectorAll(".views button"),function(b){b.addEventListener("click",function(){
+  filter=b.dataset.f;
+  Array.prototype.forEach.call(document.querySelectorAll(".views button"),function(x){x.setAttribute("aria-pressed",x===b?"true":"false")});
+  if(filter==="missing"&&spareMode)toggleSpare();
+  renderAlbum()})});
+function toggleSpare(){
+  spareMode=!spareMode;$("spareT").setAttribute("aria-pressed",spareMode?"true":"false");document.body.classList.toggle("spare-mode",spareMode);
+  $("spT").textContent=spareMode?"Editing spares":"Edit my spares";
+  $("spD").textContent=spareMode?"Use − and + on your stickers. Tap here when done.":"Off. Turn on to set how many doubles you have.";
+  if(spareMode&&filter==="missing"){filter="all";Array.prototype.forEach.call(document.querySelectorAll(".views button"),function(x){x.setAttribute("aria-pressed",x.dataset.f==="all"?"true":"false")});renderAlbum()}
+}
+$("spareT").addEventListener("click",toggleSpare);
+
+/* ---------- tabs (mobile) ---------- */
+var tabs=document.querySelectorAll("nav.tabs button");
+function show(id){
+  Array.prototype.forEach.call(tabs,function(t){var on=t.dataset.p===id;t.setAttribute("aria-selected",on?"true":"false");t.tabIndex=on?0:-1});
+  Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(p){p.classList.toggle("on",p.id===id)});
+  window.scrollTo(0,0);
+}
+Array.prototype.forEach.call(tabs,function(t,i){
+  t.addEventListener("click",function(){show(t.dataset.p)});
+  t.addEventListener("keydown",function(e){var k=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(!k)return;var n=tabs[(i+k+tabs.length)%tabs.length];n.focus();show(n.dataset.p)});
+});
+
+/* ---------- board ---------- */
+function renderBoard(){
+  var bd=$("board");bd.textContent="";
+  if(!players.length){bd.appendChild(el("div","empty","Nobody on the board yet. Join and tick your first sticker."));return}
+  players.slice().sort(function(a,b){
+    var ac=a.completedAt||Infinity, bc=b.completedAt||Infinity;if(ac!==bc)return ac-bc;
+    if(b.count!==a.count)return b.count-a.count;return (a.updatedAt||0)-(b.updatedAt||0)
+  }).forEach(function(p,i){
+    var r=el("div","row"+(p.completedAt?" win":"")+(isMe(p)?" me":""));
+    r.appendChild(el("div","pos",String(i+1)));
+    var nm=el("div","nm",p.name);if(isMe(p))nm.appendChild(el("small",null," (you)"));if(p.scanned)nm.appendChild(el("span","scn",p.scanned+" scanned"));if(p.completedAt)nm.appendChild(el("span","tag","Winner"));
+    r.appendChild(nm);r.appendChild(el("div","ct",p.count+"/"+TOTAL));
+    var m=el("div","meter"),tr=el("div","track"),fi=el("i");fi.style.width=(100*p.count/TOTAL)+"%";tr.appendChild(fi);m.appendChild(tr);
+    var lg=LEG.filter(function(n){return p.have.indexOf(n)>=0}).length, mini=el("div","mini");mini.setAttribute("aria-label",lg+" legendaries");
+    LEG.forEach(function(n){mini.appendChild(el("span",p.have.indexOf(n)>=0?"on":""))});m.appendChild(mini);
+    r.appendChild(m);bd.appendChild(r);
+  });
+}
+
+/* ---------- trades ---------- */
+function chip(n,cnt){var s=BY[n],c=el("span","chip "+s[2]);c.appendChild(el("b",null,pad(n)));c.appendChild(el("span",null,s[1]+(cnt>1?" ×"+cnt:"")));return c}
+function renderDeals(){
+  var box=$("deals");box.textContent="";
+  var mySp=spareObj(), myN=Object.keys(mySp).map(Number);
+  var deals=others().map(function(p){
+    var get=S.filter(function(s){return !have[s[0]]&&Number(p.spares[s[0]])>0}).map(function(s){return s[0]});
+    var give=myN.filter(function(n){return p.have.indexOf(n)<0});
+    return {p:p,get:get,give:give,swap:Math.min(get.length,give.length)};
+  }).filter(function(d){return d.get.length||d.give.length})
+    .sort(function(a,b){return b.swap-a.swap||(b.get.length+b.give.length)-(a.get.length+a.give.length)});
+  var n=deals.filter(function(d){return d.swap>0}).length,bd=$("dealN");bd.hidden=!n;bd.textContent=n;
+  if(!others().length){box.appendChild(el("div","note","Nobody else has joined yet."));return}
+  if(!deals.length){box.appendChild(el("div","note",myN.length?"No matches right now. Check again after the next event.":"Turn on Edit my spares in your album and set your doubles. Matches show up here."));return}
+  deals.forEach(function(d){
+    var c=el("div","deal"),h=el("h4",null,d.p.name);
+    h.appendChild(el("span",null,d.swap?d.swap+" for "+d.swap+" swap":d.get.length?"Has what you need":"Needs your spares"));c.appendChild(h);
+    if(d.get.length){var l=el("div","line"),w=el("div","chips");l.appendChild(el("b",null,"You get"));d.get.forEach(function(x){w.appendChild(chip(x,Number(d.p.spares[x])))});l.appendChild(w);c.appendChild(l)}
+    if(d.give.length){var l2=el("div","line"),w2=el("div","chips");l2.appendChild(el("b",null,"You give"));d.give.forEach(function(x){w2.appendChild(chip(x,mySp[x]))});l2.appendChild(w2);c.appendChild(l2)}
+    box.appendChild(c);
+  });
+}
+/* every spare on the board, by sticker, with who holds it and how many */
+function renderMarket(){
+  var box=$("market");box.textContent="";var total=0,rows=0;
+  S.forEach(function(s){
+    var hs=players.filter(function(p){return Number(p.spares[s[0]])>0});if(!hs.length)return;rows++;
+    var r=el("div","mk "+s[2]);r.appendChild(el("div","n",pad(s[0])));
+    var t=el("div","t",s[1]);if(!have[s[0]])t.appendChild(el("span","need","You need it"));r.appendChild(t);
+    var who=el("div","who");
+    hs.forEach(function(p,i){var c=Number(p.spares[s[0]]);total+=c;if(i)who.appendChild(document.createTextNode(" · "));who.appendChild(el("b",null,isMe(p)?"You":p.name));who.appendChild(document.createTextNode(" ×"+c))});
+    r.appendChild(who);box.appendChild(r);
+  });
+  $("mkN").textContent=total?total+" spares":"";
+  if(!rows)box.appendChild(el("div","empty","No spares listed yet."));
+}
+
+/* ---------- server ---------- */
+var tmr=null,writing=false,pending=false;
+function queueWrite(){if(!me)return;clearTimeout(tmr);tmr=setTimeout(flush,700)}
+function flush(){
+  if(!HAS_SERVER)return;
+  if(writing){pending=true;return}
+  writing=true;status("Saving…");
+  google.script.run.withSuccessHandler(function(st){writing=false;status("Saved. Everyone can see it.");live(true,"Live");apply(st);if(pending){pending=false;flush()}})
+    .withFailureHandler(function(e){writing=false;status("Saved on this phone only. "+((e&&e.message)||"No connection, try again."));live(false,"Offline");if(pending){pending=false;flush()}})
+    .save(me,pin,mine(),spareObj());
+}
+function apply(st){
+  players=(st||[]).map(function(x){return{name:String(x.name),scanned:Number(x.scanned)||0,count:Number(x.count)||0,completedAt:x.completedAt||null,updatedAt:x.updatedAt||0,have:(x.have||[]).map(Number),spares:x.spares||{}}});
+  renderBoard();renderDeals();renderMarket();if(filter==="missing")renderAlbum();
+}
+function refresh(){
+  if(!HAS_SERVER){live(false,"Offline");$("board").textContent="";$("board").appendChild(el("div","empty","The board needs the online link. Your ticks are saved on this phone."));renderDeals();renderMarket();return}
+  google.script.run.withSuccessHandler(function(st){live(true,"Live");apply(st)}).withFailureHandler(function(){live(false,"Offline")}).getState();
+}
+function signedIn(r){
+  me=r.name;
+  (r.have||[]).forEach(function(n){have[n]=true});
+  Object.keys(r.spares||{}).forEach(function(k){spares[k]=Math.max(spares[k]||0,Number(r.spares[k])||0)});
+  lsSave();renderCover();renderAlbum();
+  $("signin").hidden=true;$("hello").textContent="Hi, "+me;
+  restoreArt(r.scanned||[]);
+  try{localStorage.setItem(LSU,JSON.stringify({n:me,p:pin}))}catch(e){}
+  queueWrite();
+}
+$("signin").addEventListener("submit",function(ev){
+  ev.preventDefault();
+  var n=$("nm").value.trim(),p=$("pn").value.trim(),err=$("err");
+  if(n.length<2){err.textContent="Use a name with at least 2 letters.";return}
+  if(!/^\d{4}$/.test(p)){err.textContent="The PIN must be 4 digits.";return}
+  if(!HAS_SERVER){err.textContent="Joining needs the online link (tinyurl.com/tecbchecklist).";return}
+  err.textContent="Checking…";pin=p;
+  google.script.run.withSuccessHandler(function(r){err.textContent="";signedIn(r)})
+    .withFailureHandler(function(e){err.textContent=(e&&e.message)||"Could not join. Try again."}).join(n,p);
+});
+
+/* ---------- the one celebration: all 50 ---------- */
+function celebrate(){
+  status("All 50. Show your album at the next event to claim the win.");
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  var cv=el("canvas","confetti"),ctx=cv.getContext("2d"),W=cv.width=innerWidth,H=cv.height=innerHeight,cols=["#004990","#FFC20E","#D7262E","#fff","#8EC1FF"];
+  document.body.appendChild(cv);
+  var ps=[];for(var i=0;i<140;i++)ps.push({x:W/2,y:H*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*13-4,s:4+Math.random()*6,r:Math.random()*6,c:cols[i%cols.length]});
+  var t0=performance.now();
+  (function f(t){var k=(t-t0)/1400;ctx.clearRect(0,0,W,H);
+    ps.forEach(function(p){p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.r+=.2;ctx.save();ctx.globalAlpha=Math.max(0,1-k);ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);ctx.restore()});
+    if(k<1)requestAnimationFrame(f);else cv.remove()})(t0);
+}
+
+
+/* ---------- scan: photo -> colour fingerprint -> server match -> real picture ---------- */
+var GW=8,GH=11;
+function toPix(src,maxSide){
+  var k=Math.min(1,maxSide/Math.max(src.width,src.height)),w=Math.max(1,Math.round(src.width*k)),h=Math.max(1,Math.round(src.height*k));
+  var c=document.createElement("canvas");c.width=w;c.height=h;var x=c.getContext("2d");x.drawImage(src,0,0,w,h);
+  return {w:w,h:h,d:x.getImageData(0,0,w,h).data};
+}
+/* find the sticker: the biggest dark-navy frame near the middle of the photo */
+function findBox(p){
+  var W=p.w,H=p.h,m=new Uint8Array(W*H),lab=new Int32Array(W*H),best=null,cur=0,q=new Int32Array(W*H);
+  for(var i=0;i<W*H;i++){var r=p.d[i*4],g=p.d[i*4+1],b=p.d[i*4+2];m[i]=(b>r+18&&b>=g&&r+g+b<330)?1:0}
+  for(var st=0;st<W*H;st++){
+    if(!m[st]||lab[st])continue;
+    cur++;var hd=0,tl=0;q[tl++]=st;lab[st]=cur;var x0=W,x1=0,y0=H,y1=0,n=0;
+    while(hd<tl){var c=q[hd++],cy=(c/W)|0,cx=c-cy*W;n++;if(cx<x0)x0=cx;if(cx>x1)x1=cx;if(cy<y0)y0=cy;if(cy>y1)y1=cy;
+      if(cy+1<H){var a=c+W;if(m[a]&&!lab[a]){lab[a]=cur;q[tl++]=a}}
+      if(cy>0){a=c-W;if(m[a]&&!lab[a]){lab[a]=cur;q[tl++]=a}}
+      if(cx+1<W){a=c+1;if(m[a]&&!lab[a]){lab[a]=cur;q[tl++]=a}}
+      if(cx>0){a=c-1;if(m[a]&&!lab[a]){lab[a]=cur;q[tl++]=a}}}
+    if(n<50)continue;
+    var area=(x1-x0)*(y1-y0),d=Math.abs((x0+x1)/2-W/2)/W+Math.abs((y0+y1)/2-H/2)/H,sc=area*(1-d);
+    if(!best||sc>best.s)best={s:sc,x0:x0,y0:y0,x1:x1,y1:y1};
+  }
+  return best;
+}
+function crop(p,x0,y0,x1,y1){var w=x1-x0,h=y1-y0,d=new Uint8ClampedArray(w*h*3);
+  for(var y=0;y<h;y++)for(var x=0;x<w;x++){var si=((y+y0)*p.w+x+x0)*4,di=(y*w+x)*3;d[di]=p.d[si];d[di+1]=p.d[si+1];d[di+2]=p.d[si+2]}
+  return {w:w,h:h,d:d}}
+/* rotate 90 counter-clockwise (dir=1), clockwise (dir=-1) or 180 (dir=2) */
+function rot(c,dir){var w=c.w,h=c.h,o,W2,H2;
+  if(dir===2){W2=w;H2=h}else{W2=h;H2=w}o=new Uint8ClampedArray(w*h*3);
+  for(var y=0;y<h;y++)for(var x=0;x<w;x++){var nx,ny;
+    if(dir===1){nx=y;ny=w-1-x}else if(dir===-1){nx=h-1-y;ny=x}else{nx=w-1-x;ny=h-1-y}
+    var si=(y*w+x)*3,di=(ny*W2+nx)*3;o[di]=c.d[si];o[di+1]=c.d[si+1];o[di+2]=c.d[si+2]}
+  return {w:W2,h:H2,d:o}}
+function fingerprint(c){
+  var x0=Math.floor(c.w*.08),y0=Math.floor(c.h*.06),x1=Math.floor(c.w*.92),y1=Math.floor(c.h*.94),w=x1-x0,h=y1-y0;
+  var sum=new Float64Array(GW*GH*3),cnt=new Float64Array(GW*GH);
+  for(var y=0;y<h;y++){var gy=Math.min(GH-1,Math.floor(y*GH/h));
+    for(var x=0;x<w;x++){var gx=Math.min(GW-1,Math.floor(x*GW/w)),cell=gy*GW+gx,si=((y+y0)*c.w+x+x0)*3;
+      sum[cell*3]+=c.d[si];sum[cell*3+1]+=c.d[si+1];sum[cell*3+2]+=c.d[si+2];cnt[cell]++}}
+  var v=[];for(var i=0;i<GW*GH;i++)for(var k=0;k<3;k++)v.push(sum[i*3+k]/Math.max(1,cnt[i]));
+  for(k=0;k<3;k++){var mu=0,sd=0;for(i=0;i<GW*GH;i++)mu+=v[i*3+k];mu/=GW*GH;
+    for(i=0;i<GW*GH;i++)sd+=Math.pow(v[i*3+k]-mu,2);sd=Math.sqrt(sd/(GW*GH))+1e-6;
+    for(i=0;i<GW*GH;i++)v[i*3+k]=(v[i*3+k]-mu)/sd}
+  var nrm=Math.sqrt(v.length);return v.map(function(x){return Math.round(x/nrm*1000)/1000});
+}
+function variants(img){
+  var small=toPix(img,240),b=findBox(small);if(!b)return null;
+  var big=toPix(img,1000),s=big.w/small.w;
+  var c=crop(big,Math.floor(b.x0*s),Math.floor(b.y0*s),Math.min(big.w,Math.floor((b.x1+1)*s)),Math.min(big.h,Math.floor((b.y1+1)*s)));
+  if(c.w<40||c.h<40)return null;
+  return c.w>c.h?[fingerprint(rot(c,1)),fingerprint(rot(c,-1))]:[fingerprint(c),fingerprint(rot(c,2))];
+}
+function loadImg(file){
+  if(window.createImageBitmap)return createImageBitmap(file,{imageOrientation:"from-image"}).catch(function(){return viaImg(file)});
+  return viaImg(file);
+}
+function viaImg(file){return new Promise(function(ok,no){var u=URL.createObjectURL(file),i=new Image();i.onload=function(){ok(i)};i.onerror=no;i.src=u})}
+
+var lastFocus=null;
+function sheet(opts){
+  var sh=$("sheet");if(sh.hidden)lastFocus=document.activeElement;sh.hidden=false;
+  $("shH").textContent=opts.h||"";$("shP").textContent=opts.p||"";
+  var v=$("shVis");v.textContent="";if(opts.vis)v.appendChild(opts.vis);
+  var a=$("shA");a.textContent="";(opts.acts||[]).forEach(function(x,i){var b=el("button",x.pri?"pri":"",x.t);b.type="button";b.addEventListener("click",x.f);a.appendChild(b)});
+  var f=a.querySelector("button.pri")||a.querySelector("button");if(f)f.focus();
+}
+function closeSheet(){$("sheet").hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$("sheet").addEventListener("keydown",function(e){if(e.key==="Escape")closeSheet()});
+function cardVis(n,img,animate){
+  var land=BY[n]&&[35,36,48,49].indexOf(n)>=0;
+  var r=el("div","reveal"+(land?" land":"")),c=el("div","card3d"+(animate?" flip":" done"));
+  var bk=el("div","side back",pad(n)),fr=el("div","side front"),im=el("img");im.alt=tec(n)+" "+BY[n][1];im.src=img;fr.appendChild(im);
+  c.appendChild(bk);c.appendChild(fr);r.appendChild(c);return r;
+}
+function scanAgain(){closeSheet();$("scanIn").click()}
+$("scanB").addEventListener("click",function(){
+  if(!me){show("p-album");$("nm").focus();status("Join the board first, then scan.");return}
+  if(!HAS_SERVER){status("Scanning needs the online link.");return}
+  $("scanIn").value="";$("scanIn").click();
+});
+$("scanIn").addEventListener("change",function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  var sp=el("div","spin");sheet({vis:sp,h:"Reading your sticker…",p:"Matching it against the 50 in the album."});
+  loadImg(f).then(function(img){
+    var v=variants(img);
+    if(!v){fail("No sticker found in that photo.");return}
+    google.script.run.withSuccessHandler(function(r){
+      if(!r||!r.ok){fail("Couldn't tell which sticker that is.");return}
+      var n=r.n,isNew=!ART[n],before=mine().length;ART[n]=r.img;artSave();renderHowto();have[n]=true;lsSave();
+      renderCover();renderAlbum();renderDeals();renderMarket();
+      sheet({vis:cardVis(n,r.img,isNew),h:(isNew?"Unlocked: ":"Already unlocked: ")+tec(n),p:BY[n][1]+" · "+RN[BY[n][2]],
+        acts:[{t:"Scan another",pri:true,f:scanAgain},{t:"Done",f:closeSheet}]});
+      if(mine().length===TOTAL&&before<TOTAL)celebrate();
+    }).withFailureHandler(function(e){fail((e&&e.message)||"No connection. Try again.")}).scan(me,pin,v);
+  }).catch(function(){fail("Couldn't open that photo.")});
+});
+function fail(why){
+  sheet({h:why,p:"Fill the photo with one sticker, on a light background, with no glare. Straight on works best.",
+    acts:[{t:"Try again",pri:true,f:scanAgain},{t:"Cancel",f:closeSheet}]});
+}
+function viewArt(n){
+  sheet({vis:cardVis(n,ART[n],false),h:tec(n),p:BY[n][1]+" · "+RN[BY[n][2]],
+    acts:[{t:"Close",pri:true,f:closeSheet},{t:"Not in my album",f:function(){have[n]=false;spares[n]=0;closeSheet();renderAlbum();changed()}}]});
+}
+function restoreArt(list){
+  var need=(list||[]).filter(function(n){return !ART[n]});if(!need.length||!HAS_SERVER)return;
+  var batch=need.slice(0,10);
+  google.script.run.withSuccessHandler(function(o){Object.keys(o||{}).forEach(function(k){ART[k]=o[k]});artSave();renderHowto();renderAlbum();if(need.length>10)restoreArt(need.slice(10))}).withFailureHandler(function(){}).getArt(me,pin,batch);
+}
+
+
+/* explanation: full steps until the first scan, then one line */
+function renderHowto(){
+  var n=Object.keys(ART).length,b=$("howtoBody");
+  if(!n)return;
+  b.textContent="";var p=el("p");p.appendChild(document.createTextNode(n+" of 50 unlocked. To see another one without the blur, "));
+  var bt=el("button",null,"scan it");bt.type="button";bt.setAttribute("data-scan","");p.appendChild(bt);p.appendChild(document.createTextNode(" with your phone."));b.appendChild(p);
+}
+document.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest("[data-scan]");if(t)$("scanB").click()});
+/* ---------- start ---------- */
+lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,30000);
+if(HAS_SERVER){try{var u=JSON.parse(localStorage.getItem(LSU)||"null");if(u&&u.n&&u.p){pin=u.p;google.script.run.withSuccessHandler(signedIn).withFailureHandler(function(){}).join(u.n,u.p)}}catch(e){}}
+})();
+</script>
+</body>
+</html>
