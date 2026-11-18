@@ -772,20 +772,31 @@ document.addEventListener("click",function(e){var t=e.target.closest&&e.target.c
 
 /* legendaries: an animated clip that loops until the person closes it */
 var CLIP={};
+function toBlobUrl(src){
+  /* phones play a blob: URL far more reliably than a multi-MB data: URL */
+  try{var i=src.indexOf(","),bin=atob(src.slice(i+1)),u=new Uint8Array(bin.length);for(var k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);
+    return URL.createObjectURL(new Blob([u],{type:"video/mp4"}))}catch(e){return src}
+}
 function loadClip(n,fr,delay){
   var badge=el("span","clipload","Loading animation…");fr.appendChild(badge);
-  function put(src){
-    if(!src){badge.remove();return}
+  var giveUp=setTimeout(function(){badge.textContent="Animation unavailable right now"},45000);
+  function done(msg){clearTimeout(giveUp);if(msg){badge.textContent=msg;setTimeout(function(){badge.remove()},2500)}else badge.remove()}
+  function put(url){
+    if(!url){done();return}
     setTimeout(function(){
-      var v=document.createElement("video");v.src=src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.setAttribute("playsinline","");
+      var v=document.createElement("video");v.muted=true;v.defaultMuted=true;v.loop=true;v.autoplay=true;v.playsInline=true;
+      v.setAttribute("muted","");v.setAttribute("playsinline","");v.setAttribute("webkit-playsinline","");v.preload="auto";
       v.className="clip";v.setAttribute("aria-label","Animated "+tec(n));
-      v.addEventListener("playing",function(){badge.remove();v.classList.add("on")});
-      fr.appendChild(v);var p=v.play();if(p&&p.catch)p.catch(function(){badge.textContent="Tap to play";fr.addEventListener("click",function(){v.play()},{once:true})});
+      v.addEventListener("playing",function(){done();v.classList.add("on")});
+      v.addEventListener("error",function(){done("Couldn't play the animation")});
+      v.src=url;fr.appendChild(v);
+      var p=v.play();if(p&&p.catch)p.catch(function(){badge.textContent="Tap to play";fr.addEventListener("click",function(){v.play()},{once:true})});
     },delay);
   }
   if(CLIP[n]!==undefined){put(CLIP[n]);return}
-  if(!HAS_SERVER||!me){badge.remove();return}
-  google.script.run.withSuccessHandler(function(src){CLIP[n]=src||null;put(src)}).withFailureHandler(function(){badge.remove()}).getVideo(me,pin,n);
+  if(!HAS_SERVER||!me){done();return}
+  google.script.run.withSuccessHandler(function(src){CLIP[n]=src?toBlobUrl(src):null;put(CLIP[n])})
+    .withFailureHandler(function(e){done((e&&e.message&&/doPost|Unknown action/i.test(e.message))?"Update the Google script to see the animation":"Animation unavailable right now")}).getVideo(me,pin,n);
 }
 /* ---------- start ---------- */
 lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,30000);
