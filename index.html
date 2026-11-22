@@ -214,16 +214,16 @@ footer small{font-size:9px;opacity:.75}
 .scanbtn svg{width:24px;height:24px}
 .scanbtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--yel-d)}
 .scanbtn small{font-stretch:72%;font-weight:700;font-size:13px;opacity:.75}
-.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,18,40,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:safe center;justify-content:center;overflow-y:auto;overscroll-behavior:contain;padding:calc(16px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom));background:rgba(10,18,40,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .sheet[hidden]{display:none}
-.sheet .box{width:min(420px,100%);color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.sheet .box{margin:auto 0;width:min(420px,100%);color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
 .sheet h3{margin:0;font-stretch:112%;font-weight:900;font-size:24px;line-height:1.1}
 .sheet p{margin:0;color:#CFE0F5;font-size:15px;max-width:34ch}
 .sheet .acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .sheet .acts button{min-height:48px;padding:0 20px;border-radius:999px;font-stretch:85%;font-weight:900;font-size:16px;border:2px solid #fff;background:none;color:#fff}
 .sheet .acts button.pri{background:var(--yel);border-color:var(--yel);color:var(--navy)}
-.reveal{width:min(260px,70vw);perspective:900px}
-.reveal.land{width:min(340px,86vw)}
+.reveal{width:min(250px,64vw,calc((100vh - 300px) * .714));width:min(250px,64vw,calc((100dvh - 300px) * .714));perspective:900px}
+.reveal.land{width:min(330px,84vw)}
 .card3d{position:relative;transform-style:preserve-3d;aspect-ratio:30/42}
 .reveal.land .card3d{aspect-ratio:42/30}
 .card3d .side{position:absolute;inset:0;border-radius:10px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 20px 40px -12px rgba(0,0,0,.6)}
@@ -275,20 +275,20 @@ footer small{font-size:9px;opacity:.75}
 .zv .hint{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#9FB0CC;font-size:12px;pointer-events:none}
 
 /* ---------- album complete ---------- */
-.done{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 35%,#0A4FA8 0%,#061a3d 70%)}
-.done[hidden]{display:none}
-.done .box{width:min(440px,100%);text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;gap:12px}
-.done .medal{width:120px;height:120px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(255,194,14,.25),0 0 0 18px rgba(255,194,14,.1);animation:medal .7s var(--ease-out) both}
-.done .medal b{font-stretch:125%;font-weight:900;font-size:40px;line-height:1}
-.done .medal small{font-stretch:72%;font-weight:900;font-size:12px;letter-spacing:.06em}
+.finish{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 35%,#0A4FA8 0%,#061a3d 70%)}
+.finish[hidden]{display:none}
+.finish .box{width:min(440px,100%);text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;gap:12px}
+.finish .medal{width:120px;height:120px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(255,194,14,.25),0 0 0 18px rgba(255,194,14,.1);animation:medal .7s var(--ease-out) both}
+.finish .medal b{font-stretch:125%;font-weight:900;font-size:40px;line-height:1}
+.finish .medal small{font-stretch:72%;font-weight:900;font-size:12px;letter-spacing:.06em}
 @keyframes medal{0%{transform:scale(.4) rotate(-12deg);opacity:0}100%{transform:none;opacity:1}}
-.done h2{color:#fff;font-size:clamp(28px,8vw,40px);margin:8px 0 0}
-.done p{margin:0;color:#CFE0F5;font-size:16px;max-width:32ch}
-.done .place{font-stretch:80%;font-weight:900;font-size:18px;color:var(--yel)}
-.done button{margin-top:10px;min-height:50px;padding:0 26px;border-radius:999px;border:0;background:var(--yel);color:var(--navy);font-stretch:85%;font-weight:900;font-size:17px}
+.finish h2{color:#fff;font-size:clamp(28px,8vw,40px);margin:8px 0 0}
+.finish p{margin:0;color:#CFE0F5;font-size:16px;max-width:32ch}
+.finish .place{font-stretch:80%;font-weight:900;font-size:18px;color:var(--yel)}
+.finish button{margin-top:10px;min-height:50px;padding:0 26px;border-radius:999px;border:0;background:var(--yel);color:var(--navy);font-stretch:85%;font-weight:900;font-size:17px}
 .donetop{position:absolute;top:calc(16px + env(safe-area-inset-top));left:20px;right:20px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1.5px solid rgba(255,255,255,.22);color:#CFE0F5;font-stretch:70%;font-weight:700;font-size:14px}
 .donetop .mark{font-size:clamp(36px,10vw,56px)}
-.done .box{margin-top:60px}
+.finish .box{margin-top:60px}
 .donebadge{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:3px 10px;border-radius:999px;background:var(--yel);color:var(--navy);font-stretch:80%;font-weight:900;font-size:13px;vertical-align:4px}
 
 .brand{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1.5px solid rgba(255,255,255,.22)}
@@ -465,7 +465,7 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
   <div class="bar2"><button type="button" class="r" id="zvOut" aria-label="Zoom out">−</button><button type="button" class="r" id="zvFit">Fit</button><button type="button" class="r" id="zvIn" aria-label="Zoom in">+</button></div>
 </div>
 
-<div class="done" id="done" hidden role="dialog" aria-modal="true" aria-labelledby="doneH">
+<div class="finish" id="done" hidden role="dialog" aria-modal="true" aria-labelledby="doneH">
   <div class="donetop"><span class="mark">TeC-B</span><span>Sticker album · 2026/27</span></div>
   <div class="box">
     <div class="medal" aria-hidden="true"><b>50</b><small>OF 50</small></div>
@@ -853,13 +853,13 @@ function viaImg(file){return new Promise(function(ok,no){var u=URL.createObjectU
 
 var lastFocus=null;
 function sheet(opts){
-  var sh=$("sheet");if(sh.hidden)lastFocus=document.activeElement;sh.hidden=false;
+  var sh=$("sheet");if(sh.hidden)lastFocus=document.activeElement;sh.hidden=false;lockScroll(true);sh.scrollTop=0;
   $("shH").textContent=opts.h||"";$("shP").textContent=opts.p||"";
   var v=$("shVis");v.textContent="";if(opts.vis)v.appendChild(opts.vis);
   var a=$("shA");a.textContent="";(opts.acts||[]).forEach(function(x,i){var b=el("button",x.pri?"pri":"",x.t);b.type="button";b.addEventListener("click",x.f);a.appendChild(b)});
   var f=a.querySelector("button.pri")||a.querySelector("button");if(f)f.focus();
 }
-function closeSheet(){$("sheet").hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function closeSheet(){$("sheet").hidden=true;if($("bk").hidden&&$("zv").hidden)lockScroll(false);if(lastFocus&&lastFocus.focus)lastFocus.focus()}
 $("sheet").addEventListener("keydown",function(e){if(e.key==="Escape")closeSheet()});
 function cardVis(n,img,animate){
   var land=BY[n]&&[35,36,48,49].indexOf(n)>=0;
@@ -973,9 +973,9 @@ function openZoom(n){
   Z.prevFocus=document.activeElement;Z.s=1;Z.x=0;Z.y=0;Z.pts={};
   zvImg.src=ART[n];zvImg.alt=tec(n)+" "+BY[n][1];zApply();
   $("zvT").textContent=tec(n)+" · "+BY[n][1];$("zvS").textContent=RN[BY[n][2]];
-  $("zv").hidden=false;document.body.style.overflow="hidden";$("zvX").focus();
+  $("zv").hidden=false;lockScroll(true);$("zvX").focus();
 }
-function closeZoom(){$("zv").hidden=true;document.body.style.overflow="";if(Z.prevFocus&&Z.prevFocus.focus)Z.prevFocus.focus()}
+function closeZoom(){$("zv").hidden=true;lockScroll(false);if(Z.prevFocus&&Z.prevFocus.focus)Z.prevFocus.focus()}
 $("zvX").addEventListener("click",closeZoom);
 $("zv").addEventListener("keydown",function(e){if(e.key==="Escape")closeZoom();if(e.key==="+"||e.key==="=")zTo(Z.s*1.5);if(e.key==="-")zTo(Z.s/1.5)});
 $("zvIn").addEventListener("click",function(){zTo(Z.s*1.6)});
@@ -1122,12 +1122,12 @@ function bkShow(i,dir){
 function openBook(){
   bk.prevFocus=document.activeElement;enableTilt();
   $("bkT").textContent=(me?me+"'s":"My")+" album";
-  $("bk").hidden=false;document.body.style.overflow="hidden";
+  $("bk").hidden=false;lockScroll(true);
   /* open on the first page that has stickers in it */
   var start=0;for(var i=0;i<SLOTS.length;i++){if((SLOTS[i]||[]).some(function(s){return have[s.n]})){start=i;break}}
   $("bkDesk").textContent="";bkShow(start,0);$("bkX").focus();
 }
-function closeBook(){$("bk").hidden=true;document.body.style.overflow="";if(bk.prevFocus&&bk.prevFocus.focus)bk.prevFocus.focus()}
+function closeBook(){$("bk").hidden=true;lockScroll(false);if(bk.prevFocus&&bk.prevFocus.focus)bk.prevFocus.focus()}
 $("bookB").addEventListener("click",openBook);
 $("bkX").addEventListener("click",closeBook);
 $("bkPrev").addEventListener("click",function(){bkShow(bk.i-1,-1)});
@@ -1138,6 +1138,7 @@ $("bk").addEventListener("keydown",function(e){if(e.key==="Escape")closeBook();i
   d.addEventListener("touchend",function(e){if(sx==null)return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;
     if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))bkShow(bk.i+(dx<0?1:-1),dx<0?1:-1)},{passive:true});
 })();
+function lockScroll(on){var v=on?"hidden":"";document.documentElement.style.overflow=v;document.body.style.overflow=v}
 /* ---------- start ---------- */
 lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,15000);
 if(HAS_SERVER){try{var u=JSON.parse(localStorage.getItem(LSU)||"null");if(u&&u.n&&u.p){pin=u.p;google.script.run.withSuccessHandler(signedIn).withFailureHandler(function(){}).join(u.n,u.p)}}catch(e){}}
