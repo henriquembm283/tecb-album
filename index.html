@@ -275,7 +275,7 @@ footer small{font-size:9px;opacity:.75}
 .zv .hint{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#9FB0CC;font-size:12px;pointer-events:none}
 
 /* ---------- album complete ---------- */
-.done{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 35%,#0A4FA8 0%,#061a3d 70%)}
+.done{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 35%,#0A4FA8 0%,#061a3d 70%)}
 .done[hidden]{display:none}
 .done .box{width:min(440px,100%);text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;gap:12px}
 .done .medal{width:120px;height:120px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(255,194,14,.25),0 0 0 18px rgba(255,194,14,.1);animation:medal .7s var(--ease-out) both}
@@ -286,12 +286,85 @@ footer small{font-size:9px;opacity:.75}
 .done p{margin:0;color:#CFE0F5;font-size:16px;max-width:32ch}
 .done .place{font-stretch:80%;font-weight:900;font-size:18px;color:var(--yel)}
 .done button{margin-top:10px;min-height:50px;padding:0 26px;border-radius:999px;border:0;background:var(--yel);color:var(--navy);font-stretch:85%;font-weight:900;font-size:17px}
+.donetop{position:absolute;top:calc(16px + env(safe-area-inset-top));left:20px;right:20px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1.5px solid rgba(255,255,255,.22);color:#CFE0F5;font-stretch:70%;font-weight:700;font-size:14px}
+.donetop .mark{font-size:clamp(36px,10vw,56px)}
+.done .box{margin-top:60px}
 .donebadge{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:3px 10px;border-radius:999px;background:var(--yel);color:var(--navy);font-stretch:80%;font-weight:900;font-size:13px;vertical-align:4px}
 
 .brand{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1.5px solid rgba(255,255,255,.22)}
 .mark{font-stretch:125%;font-weight:900;font-size:clamp(40px,12vw,64px);line-height:.85;letter-spacing:-.035em;color:#fff}
 .brandside{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-stretch:70%;font-weight:700;font-size:14px;color:#CFE0F5;padding-bottom:2px;text-align:right}
 .season{white-space:nowrap}
+
+/* ---------- 1. tilt + foil (phone motion sensor, or mouse on desktop) ---------- */
+:root{--tx:0;--ty:0}
+.tiltable{transform:perspective(700px) rotateX(calc(var(--ty) * -9deg)) rotateY(calc(var(--tx) * 11deg));transition:transform .12s linear;will-change:transform}
+.slot.art .face{transform:perspective(500px) rotateX(calc(var(--ty) * -5deg)) rotateY(calc(var(--tx) * 6deg))}
+.foil{position:absolute;inset:0;pointer-events:none;z-index:2;mix-blend-mode:color-dodge;background-size:250% 250%;
+  background-position:calc(50% + var(--tx) * 45%) calc(50% + var(--ty) * 45%);opacity:.22;
+  background-image:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.75) 45%,transparent 60%)}
+.foil.R{opacity:.5;background-image:linear-gradient(115deg,transparent 22%,rgba(90,170,255,.85) 38%,rgba(190,120,255,.8) 48%,rgba(120,240,255,.8) 58%,transparent 72%)}
+.foil.L{opacity:.6;background-image:linear-gradient(115deg,transparent 20%,rgba(255,215,90,.95) 36%,rgba(255,250,210,.95) 46%,rgba(255,170,40,.9) 56%,transparent 72%)}
+.card3d .front .foil{border-radius:10px}
+
+/* ---------- 2. reveal by rarity ---------- */
+.sheet.dark{background:rgba(0,0,0,.94)}
+.reveal{position:relative}
+.reveal .glow{position:absolute;inset:-30px;border-radius:30px;pointer-events:none;opacity:0}
+.reveal.rv-R .glow{background:radial-gradient(closest-side,rgba(80,160,255,.55),transparent);animation:glow 1.4s .55s var(--ease-out) both}
+.reveal.rv-L .glow{background:radial-gradient(closest-side,rgba(255,200,40,.8),transparent);animation:glow 1.8s 1.25s var(--ease-out) both}
+@keyframes glow{0%{opacity:0;transform:scale(.6)}35%{opacity:1}100%{opacity:.45;transform:scale(1.15)}}
+.reveal.rv-L .card3d.flip{animation-delay:.9s}
+.reveal.rv-L .card3d.flip .back{background:#1a1300;color:var(--yel);box-shadow:0 0 0 2px var(--yel),0 0 40px rgba(255,194,14,.6);animation:tease .9s ease-in-out}
+@keyframes tease{0%,100%{box-shadow:0 0 0 2px var(--yel),0 0 20px rgba(255,194,14,.3)}50%{box-shadow:0 0 0 3px var(--yel),0 0 60px rgba(255,194,14,.9)}}
+.reveal .sweep{position:absolute;inset:0;border-radius:10px;overflow:hidden;pointer-events:none;z-index:3}
+.reveal .sweep::after{content:"";position:absolute;top:-20%;bottom:-20%;width:40%;left:-60%;transform:skewX(-18deg);opacity:0}
+.reveal.rv-R .sweep::after{background:linear-gradient(90deg,transparent,rgba(140,200,255,.9),transparent);animation:sweep .9s .75s ease-out both}
+.reveal.rv-L .sweep::after{background:linear-gradient(90deg,transparent,rgba(255,230,140,1),transparent);animation:sweep 1s 1.65s ease-out both}
+@keyframes sweep{0%{left:-60%;opacity:1}100%{left:130%;opacity:1}}
+.rarity{display:inline-block;font-stretch:80%;font-weight:900;font-size:13px;letter-spacing:.08em;padding:3px 10px;border-radius:999px}
+.rarity.R{background:#2F7BEA;color:#fff} .rarity.L{background:var(--yel);color:var(--navy)} .rarity.C{background:rgba(255,255,255,.15);color:#fff}
+
+/* ---------- 3. live team feed ---------- */
+.toasts{position:fixed;left:0;right:0;top:calc(10px + env(safe-area-inset-top));z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 12px}
+.toast{pointer-events:auto;max-width:420px;width:100%;display:flex;gap:10px;align-items:center;background:rgba(14,26,56,.96);color:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);
+  font-size:14px;line-height:1.35;animation:tin .35s var(--ease-out) both;border:1px solid rgba(255,255,255,.12)}
+.toast.out{animation:tout .3s ease-in both}
+.toast .ic{font-size:20px;flex:none}
+.toast b{font-weight:800}
+.toast.L{border-color:var(--yel);box-shadow:0 0 0 1px var(--yel),0 10px 30px rgba(0,0,0,.35)}
+@keyframes tin{0%{opacity:0;transform:translateY(-14px) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes tout{to{opacity:0;transform:translateY(-10px)}}
+@media (min-width:980px){.toasts{align-items:flex-end;padding-right:24px}}
+@media (prefers-reduced-motion:reduce){.tiltable,.slot.art .face{transform:none!important}}
+
+/* ---------- 4. book view: the real printed pages with your stickers in their slots ---------- */
+.bookbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;margin:0 0 14px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:#fff;font-stretch:90%;font-weight:900;font-size:16px}
+.bookbtn svg{width:22px;height:22px}
+.bk{position:fixed;inset:0;z-index:65;background:radial-gradient(circle at 50% 40%,#1b2d57,#070d1f 75%);display:flex;flex-direction:column;touch-action:pan-y}
+.bk[hidden]{display:none}
+.bk .top{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top)) 14px 6px;color:#fff}
+.bk .top b{font-stretch:80%;font-weight:900;font-size:16px}
+.bk .top small{display:block;font-size:12px;color:#9FB0CC;font-weight:600}
+.bk .x{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:22px}
+.bk .desk{flex:1;display:flex;align-items:center;justify-content:center;perspective:1800px;overflow:hidden;padding:6px 10px}
+.bk .pg{position:relative;height:min(calc(100vh - 170px),calc((100vw - 24px) * 1.4189));height:min(calc(100dvh - 170px),calc((100vw - 24px) * 1.4189));aspect-ratio:148/210;
+  background:#EEF2F7 center/cover no-repeat;border-radius:3px 8px 8px 3px;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),inset 8px 0 14px -10px rgba(0,0,0,.35);transform-origin:left center;transform-style:preserve-3d}
+.bk .pg .st{position:absolute;border-radius:6%/4.3%;overflow:hidden}
+.bk .pg .st img{width:100%;height:100%;object-fit:cover;display:block}
+.bk .pg .st.tz img{filter:blur(4px) saturate(1.3);transform:scale(1.15)}
+.bk .pg .st.tz::after{content:"";position:absolute;inset:0;background:rgba(20,35,80,.35)}
+.bk .pg .st .foil{border-radius:inherit}
+.bk .pg.turn-next{animation:pnext .55s cubic-bezier(.45,.05,.3,1) both}
+.bk .pg.turn-prev{animation:pprev .55s cubic-bezier(.45,.05,.3,1) both}
+@keyframes pnext{0%{transform:rotateY(0)}100%{transform:rotateY(-100deg);opacity:.2}}
+@keyframes pprev{0%{transform:rotateY(-100deg);opacity:.2}100%{transform:rotateY(0);opacity:1}}
+.bk .pg.under{position:absolute;z-index:-1}
+.bk .nav{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 14px calc(14px + env(safe-area-inset-bottom));color:#CFE0F5;font-weight:700}
+.bk .nav button{width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:22px;font-weight:900}
+.bk .nav button:disabled{opacity:.3}
+.bk .nav span{min-width:110px;text-align:center;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.bk .pg.turn-next,.bk .pg.turn-prev{animation:none}}
 canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card3d.flip{transform:rotateY(180deg)}}
 </style>
@@ -344,6 +417,7 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
         </ol>
       </div>
     </div>
+    <button type="button" class="bookbtn" id="bookB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/></svg>Open my album</button>
     <div class="bar">
       <div class="views" role="group" aria-label="Show">
         <button type="button" data-f="all" aria-pressed="true">All <small id="nAll">50</small></button>
@@ -392,6 +466,7 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 </div>
 
 <div class="done" id="done" hidden role="dialog" aria-modal="true" aria-labelledby="doneH">
+  <div class="donetop"><span class="mark">TeC-B</span><span>Sticker album · 2026/27</span></div>
   <div class="box">
     <div class="medal" aria-hidden="true"><b>50</b><small>OF 50</small></div>
     <h2 id="doneH">Album complete!</h2>
@@ -400,6 +475,14 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
     <p style="font-size:14px">Show your album at the next event to claim your place on the board.</p>
     <button type="button" id="doneX">Close</button>
   </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<div class="bk" id="bk" hidden role="dialog" aria-modal="true" aria-labelledby="bkT">
+  <div class="top"><div><b id="bkT">My album</b><small id="bkS"></small></div><button type="button" class="x" id="bkX" aria-label="Close">×</button></div>
+  <div class="desk" id="bkDesk"></div>
+  <div class="nav"><button type="button" id="bkPrev" aria-label="Previous page">‹</button><span id="bkN"></span><button type="button" id="bkNext" aria-label="Next page">›</button></div>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="Sections">
@@ -507,7 +590,7 @@ function paintSlot(s,w){
   b.setAttribute("aria-label",tec(s[0])+", "+s[1]+", "+RN[s[2]]+(got?", in your album":", missing")+(n?", "+n+" spare":""));
   f.textContent="";
   w.classList.toggle("art",got&&!!ART[s[0]]);
-  if(got&&ART[s[0]]){var ri=el("img","real");ri.alt="";ri.src=ART[s[0]];f.appendChild(ri)}
+  if(got&&ART[s[0]]){var ri=el("img","real");ri.alt="";ri.src=ART[s[0]];f.appendChild(ri);f.appendChild(el("div","foil "+s[2]))}
   else if(got){
     if(TZ[s[0]]){var im=el("img","tz");im.alt="";im.src=TZ[s[0]];f.appendChild(im)}}
   if(got){
@@ -666,6 +749,7 @@ function flush(){
 function apply(st){
   players=(st||[]).map(function(x){return{name:String(x.name),scanned:Number(x.scanned)||0,count:Number(x.count)||0,completedAt:x.completedAt||null,updatedAt:x.updatedAt||0,have:(x.have||[]).map(Number),spares:x.spares||{}}});
   renderBoard();renderDeals();renderMarket();if(filter==="missing")renderAlbum();
+  feed(players);
 }
 function refresh(){
   if(!HAS_SERVER){live(false,"Offline");$("board").textContent="";$("board").appendChild(el("div","empty","The board needs the online link. Your ticks are saved on this phone."));renderDeals();renderMarket();return}
@@ -779,10 +863,12 @@ function closeSheet(){$("sheet").hidden=true;if(lastFocus&&lastFocus.focus)lastF
 $("sheet").addEventListener("keydown",function(e){if(e.key==="Escape")closeSheet()});
 function cardVis(n,img,animate){
   var land=BY[n]&&[35,36,48,49].indexOf(n)>=0;
-  var r=el("div","reveal"+(land?" land":"")),c=el("div","card3d"+(animate?" flip":" done"));
+  var k=BY[n][2];
+  var r=el("div","reveal tiltable"+(land?" land":"")+(animate?" rv-"+k:"")),c=el("div","card3d"+(animate?" flip":" done"));
   var bk=el("div","side back",pad(n)),fr=el("div","side front"),im=el("img");im.alt=tec(n)+" "+BY[n][1];im.src=img;fr.appendChild(im);
-  c.appendChild(bk);c.appendChild(fr);r.appendChild(c);
-  if(BY[n][2]==="L")loadClip(n,fr,animate?750:0);
+  fr.appendChild(el("div","foil "+k));fr.appendChild(el("div","sweep"));
+  c.appendChild(bk);c.appendChild(fr);r.insertBefore(el("div","glow"),null);r.appendChild(c);
+  if(k==="L")loadClip(n,fr,animate?1700:0);
   return r;
 }
 function scanAgain(){closeSheet();$("scanIn").click()}
@@ -801,8 +887,11 @@ $("scanIn").addEventListener("change",function(){
       if(!r||!r.ok){fail("Couldn't tell which sticker that is.");return}
       var n=r.n,isNew=!ART[n],before=mine().length;ART[n]=r.img;artSave();renderHowto();have[n]=true;lsSave();
       renderCover();renderAlbum();renderDeals();renderMarket();
-      sheet({vis:cardVis(n,r.img,isNew),h:(isNew?"Unlocked: ":"Already unlocked: ")+tec(n),p:BY[n][1]+" · "+RN[BY[n][2]],
+      var k=BY[n][2];
+      sheet({vis:cardVis(n,r.img,isNew),h:(isNew?"Unlocked: ":"Already unlocked: ")+tec(n),p:BY[n][1],
         acts:[{t:"View full size",f:function(){openZoom(n)}},{t:"Scan another",pri:true,f:scanAgain},{t:"Done",f:closeSheet}]});
+      var badge=el("span","rarity "+k,k==="L"?"★★ LEGENDARY":k==="R"?"★ RARE":"COMMON");$("shP").prepend(document.createTextNode(" "));$("shP").prepend(badge);
+      if(isNew)rarityMoment(k);
       if(r.complete){var seen=false;try{seen=localStorage.getItem(LSD)==="1"}catch(e){}
         if(!seen)setTimeout(function(){closeSheet();showDone(r.place)},2600);else markDone()}
     }).withFailureHandler(function(e){fail((e&&e.message)||"No connection. Try again.")}).scan(me,pin,v);
@@ -880,7 +969,7 @@ function zTo(s,px,py){
   if(s===1){Z.x=0;Z.y=0}else zClamp();zApply();
 }
 function openZoom(n){
-  if(!ART[n])return;
+  if(!ART[n])return;enableTilt();
   Z.prevFocus=document.activeElement;Z.s=1;Z.x=0;Z.y=0;Z.pts={};
   zvImg.src=ART[n];zvImg.alt=tec(n)+" "+BY[n][1];zApply();
   $("zvT").textContent=tec(n)+" · "+BY[n][1];$("zvS").textContent=RN[BY[n][2]];
@@ -928,8 +1017,129 @@ function showDone(place){
 function markDone(){if(!$("hello").querySelector(".donebadge")){var b=el("span","donebadge","Album complete");$("hello").appendChild(b)}}
 $("doneX").addEventListener("click",function(){$("done").hidden=true});
 $("done").addEventListener("keydown",function(e){if(e.key==="Escape")$("done").hidden=true});
+
+/* ---------- 1. tilt: phone motion sensor, or mouse position on desktop ---------- */
+var RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var tilt={base:null,raf:0,x:0,y:0};
+function setTilt(x,y){tilt.x=Math.max(-1,Math.min(1,x));tilt.y=Math.max(-1,Math.min(1,y));
+  if(!tilt.raf)tilt.raf=requestAnimationFrame(function(){tilt.raf=0;var d=document.documentElement.style;d.setProperty("--tx",tilt.x.toFixed(3));d.setProperty("--ty",tilt.y.toFixed(3))})}
+function onOrient(e){if(e.gamma==null)return;
+  if(!tilt.base)tilt.base={b:e.beta,g:e.gamma};
+  /* slowly re-centre so it follows how the person is holding the phone */
+  tilt.base.b+=(e.beta-tilt.base.b)*.02;tilt.base.g+=(e.gamma-tilt.base.g)*.02;
+  setTilt((e.gamma-tilt.base.g)/20,(e.beta-tilt.base.b)/20)}
+var orientAsked=false;
+function enableTilt(){
+  if(RM||orientAsked)return;orientAsked=true;
+  var D=window.DeviceOrientationEvent;
+  if(D&&typeof D.requestPermission==="function"){D.requestPermission().then(function(p){if(p==="granted")addEventListener("deviceorientation",onOrient)}).catch(function(){})}
+  else if(D)addEventListener("deviceorientation",onOrient);
+}
+if(!RM){
+  addEventListener("pointermove",function(e){if(e.pointerType==="mouse")setTilt((e.clientX/innerWidth-.5)*2,(e.clientY/innerHeight-.5)*2)});
+  /* iPhone asks permission only after a tap */
+  addEventListener("pointerdown",enableTilt,{once:true});
+  if(!(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==="function"))enableTilt();
+}
+
+/* ---------- 2. a moment per rarity ---------- */
+function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+function rarityMoment(k){
+  if(k==="C"){buzz(20);return}
+  if(k==="R"){buzz([30,50,30]);return}
+  /* legendary: lights out, a tease, then the flip, a gold burst and gold confetti */
+  var sh=$("sheet");sh.classList.add("dark");buzz([40,120,40,120,220]);
+  setTimeout(function(){burst(["#FFC20E","#FFE38A","#FFFFFF","#FFB300"])},1350);
+  setTimeout(function(){sh.classList.remove("dark")},2600);
+}
+function burst(cols){
+  if(RM)return;
+  var cv=el("canvas","confetti"),ctx=cv.getContext("2d"),W=cv.width=innerWidth,H=cv.height=innerHeight;document.body.appendChild(cv);
+  var ps=[];for(var i=0;i<110;i++){var a=Math.random()*Math.PI*2,v=4+Math.random()*9;ps.push({x:W/2,y:H*.4,vx:Math.cos(a)*v,vy:Math.sin(a)*v-3,s:3+Math.random()*5,r:Math.random()*6,c:cols[i%cols.length]})}
+  var t0=performance.now();
+  (function f(t){var k=(t-t0)/1500;ctx.clearRect(0,0,W,H);
+    ps.forEach(function(p){p.vy+=.22;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=.15;ctx.save();ctx.globalAlpha=Math.max(0,1-k);ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);ctx.restore()});
+    if(k<1)requestAnimationFrame(f);else cv.remove()})(t0);
+}
+
+/* ---------- 3. live team feed: what changed since the last check ---------- */
+var prevSnap=null;
+function toast(icon,html,cls){
+  var box=$("toasts");while(box.children.length>=3)box.firstChild.remove();
+  var t=el("div","toast "+(cls||""));t.appendChild(el("span","ic",icon));var m=el("span");m.innerHTML=html;t.appendChild(m);box.appendChild(t);
+  setTimeout(function(){t.classList.add("out");setTimeout(function(){t.remove()},320)},6500);
+}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]})}
+function feed(ps){
+  var snap={};ps.forEach(function(p){snap[p.name.toLowerCase()]={have:p.have.slice(),count:p.count,done:!!p.completedAt}});
+  if(prevSnap){
+    var shown=0;
+    ps.forEach(function(p){
+      if(isMe(p)||shown>=3)return;var o=prevSnap[p.name.toLowerCase()];if(!o)return;
+      var nw=p.have.filter(function(n){return o.have.indexOf(n)<0});
+      if(p.completedAt&&!o.done){toast("🏆","<b>"+esc(p.name)+"</b> completed the album!","L");shown++;return}
+      nw.filter(function(n){return BY[n]&&BY[n][2]==="L"}).forEach(function(n){if(shown<3){toast("🔥","<b>"+esc(p.name)+"</b> just got a LEGENDARY · "+tec(n)+" "+esc(BY[n][1]),"L");shown++}});
+      nw.filter(function(n){return BY[n]&&BY[n][2]==="R"}).forEach(function(n){if(shown<3){toast("✨","<b>"+esc(p.name)+"</b> got a rare · "+tec(n));shown++}});
+      var left=TOTAL-p.count,oleft=TOTAL-o.count;
+      if(left>0&&left<=5&&oleft>5&&shown<3){toast("⏳","<b>"+esc(p.name)+"</b> is "+left+" away from finishing");shown++}
+    });
+  }
+  prevSnap=snap;
+}
+
+/* ---------- 4. book view ---------- */
+var SLOTS=[[], [], [{"n": 1, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 2, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 3, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 4, "x": 24.662, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 5, "x": 51.688, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 6, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 7, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 8, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 9, "x": 24.662, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 10, "x": 51.688, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 11, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 12, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 13, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 14, "x": 24.662, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 15, "x": 51.688, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 16, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 17, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 18, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 19, "x": 11.15, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 20, "x": 38.176, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 21, "x": 65.203, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 22, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 23, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 24, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 25, "x": 24.662, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 26, "x": 51.688, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 27, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 28, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 29, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 30, "x": 24.662, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 31, "x": 51.688, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 32, "x": 11.15, "y": 42.613, "w": 23.647, "h": 23.312}, {"n": 33, "x": 38.176, "y": 42.613, "w": 23.647, "h": 23.312}, {"n": 34, "x": 65.203, "y": 42.613, "w": 23.647, "h": 23.312}], [{"n": 35, "x": 15.197, "y": 27.889, "w": 33.112, "h": 16.648}, {"n": 36, "x": 51.688, "y": 27.889, "w": 33.112, "h": 16.648}, {"n": 37, "x": 24.662, "y": 57.338, "w": 23.647, "h": 23.312}, {"n": 38, "x": 51.688, "y": 57.338, "w": 23.647, "h": 23.312}], [{"n": 39, "x": 11.15, "y": 42.613, "w": 23.647, "h": 23.312}, {"n": 40, "x": 38.176, "y": 42.613, "w": 23.647, "h": 23.312}, {"n": 41, "x": 65.203, "y": 42.613, "w": 23.647, "h": 23.312}], [{"n": 42, "x": 11.15, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 43, "x": 38.176, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 44, "x": 65.203, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 45, "x": 24.662, "y": 59.558, "w": 23.647, "h": 23.312}, {"n": 46, "x": 51.688, "y": 59.558, "w": 23.647, "h": 23.312}], [{"n": 47, "x": 19.93, "y": 25.667, "w": 23.647, "h": 23.312}, {"n": 48, "x": 46.956, "y": 25.667, "w": 33.112, "h": 16.648}, {"n": 49, "x": 19.93, "y": 59.558, "w": 33.112, "h": 16.648}, {"n": 50, "x": 56.421, "y": 59.558, "w": 23.647, "h": 23.312}], [], [], []];
+var PB=window.__PB||(location.hostname.indexOf("github.io")>=0?"pages/":"https://henriquembm283.github.io/tecb-album/pages/");
+var bk={i:0,busy:false,prevFocus:null};
+function pageEl(i){
+  var pg=el("div","pg");pg.style.backgroundImage="url("+PB+"p"+("0"+(i+1)).slice(-2)+".jpg)";
+  (SLOTS[i]||[]).forEach(function(s){
+    if(!have[s.n])return;                       /* missing: the printed empty slot shows through */
+    var d=el("div","st"+(ART[s.n]?"":" tz"));d.style.left=s.x+"%";d.style.top=s.y+"%";d.style.width=s.w+"%";d.style.height=s.h+"%";
+    var im=el("img");im.alt=tec(s.n);im.src=ART[s.n]||TZ[s.n];d.appendChild(im);
+    if(ART[s.n]){d.appendChild(el("div","foil "+BY[s.n][2]));d.style.cursor="zoom-in";d.addEventListener("click",function(){openZoom(s.n)})}
+    pg.appendChild(d);
+  });
+  return pg;
+}
+function bkTitle(){
+  var n=SLOTS.length,got=(SLOTS[bk.i]||[]).filter(function(s){return have[s.n]}).length,tot=(SLOTS[bk.i]||[]).length;
+  $("bkN").textContent="Page "+(bk.i+1)+" of "+n;
+  $("bkS").textContent=tot?got+" of "+tot+" stickers on this page":"";
+  $("bkPrev").disabled=bk.i===0;$("bkNext").disabled=bk.i===n-1;
+}
+function bkShow(i,dir){
+  if(bk.busy||i<0||i>=SLOTS.length)return;
+  var desk=$("bkDesk"),cur=desk.querySelector(".pg"),nx=pageEl(i);
+  if(!cur||!dir||RM){desk.textContent="";desk.appendChild(nx);bk.i=i;bkTitle();return}
+  bk.busy=true;buzz(8);
+  if(dir>0){nx.classList.add("under");desk.insertBefore(nx,cur);cur.classList.add("turn-next");
+    setTimeout(function(){cur.remove();nx.classList.remove("under");bk.busy=false},560)}
+  else{desk.appendChild(nx);nx.style.position="absolute";nx.classList.add("turn-prev");
+    setTimeout(function(){cur.remove();nx.style.position="";nx.classList.remove("turn-prev");bk.busy=false},560)}
+  bk.i=i;bkTitle();
+}
+function openBook(){
+  bk.prevFocus=document.activeElement;enableTilt();
+  $("bkT").textContent=(me?me+"'s":"My")+" album";
+  $("bk").hidden=false;document.body.style.overflow="hidden";
+  /* open on the first page that has stickers in it */
+  var start=0;for(var i=0;i<SLOTS.length;i++){if((SLOTS[i]||[]).some(function(s){return have[s.n]})){start=i;break}}
+  $("bkDesk").textContent="";bkShow(start,0);$("bkX").focus();
+}
+function closeBook(){$("bk").hidden=true;document.body.style.overflow="";if(bk.prevFocus&&bk.prevFocus.focus)bk.prevFocus.focus()}
+$("bookB").addEventListener("click",openBook);
+$("bkX").addEventListener("click",closeBook);
+$("bkPrev").addEventListener("click",function(){bkShow(bk.i-1,-1)});
+$("bkNext").addEventListener("click",function(){bkShow(bk.i+1,1)});
+$("bk").addEventListener("keydown",function(e){if(e.key==="Escape")closeBook();if(e.key==="ArrowRight")bkShow(bk.i+1,1);if(e.key==="ArrowLeft")bkShow(bk.i-1,-1)});
+(function(){var sx=null,sy=0;var d=$("bkDesk");
+  d.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+  d.addEventListener("touchend",function(e){if(sx==null)return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))bkShow(bk.i+(dx<0?1:-1),dx<0?1:-1)},{passive:true});
+})();
 /* ---------- start ---------- */
-lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,30000);
+lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,15000);
 if(HAS_SERVER){try{var u=JSON.parse(localStorage.getItem(LSU)||"null");if(u&&u.n&&u.p){pin=u.p;google.script.run.withSuccessHandler(signedIn).withFailureHandler(function(){}).join(u.n,u.p)}}catch(e){}}
 })();
 </script>
