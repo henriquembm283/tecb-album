@@ -273,6 +273,20 @@ footer small{font-size:9px;opacity:.75}
 .zv button.r{min-width:48px;height:48px;border-radius:999px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-weight:900;font-size:20px;padding:0 16px}
 .zv button.x{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:22px;line-height:1}
 .zv .hint{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#9FB0CC;font-size:12px;pointer-events:none}
+
+/* ---------- album complete ---------- */
+.done{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 35%,#0A4FA8 0%,#061a3d 70%)}
+.done[hidden]{display:none}
+.done .box{width:min(440px,100%);text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;gap:12px}
+.done .medal{width:120px;height:120px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(255,194,14,.25),0 0 0 18px rgba(255,194,14,.1);animation:medal .7s var(--ease-out) both}
+.done .medal b{font-stretch:125%;font-weight:900;font-size:40px;line-height:1}
+.done .medal small{font-stretch:72%;font-weight:900;font-size:12px;letter-spacing:.06em}
+@keyframes medal{0%{transform:scale(.4) rotate(-12deg);opacity:0}100%{transform:none;opacity:1}}
+.done h2{color:#fff;font-size:clamp(28px,8vw,40px);margin:8px 0 0}
+.done p{margin:0;color:#CFE0F5;font-size:16px;max-width:32ch}
+.done .place{font-stretch:80%;font-weight:900;font-size:18px;color:var(--yel)}
+.done button{margin-top:10px;min-height:50px;padding:0 26px;border-radius:999px;border:0;background:var(--yel);color:var(--navy);font-stretch:85%;font-weight:900;font-size:17px}
+.donebadge{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:3px 10px;border-radius:999px;background:var(--yel);color:var(--navy);font-stretch:80%;font-weight:900;font-size:13px;vertical-align:4px}
 canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card3d.flip{transform:rotateY(180deg)}}
 </style>
@@ -367,6 +381,17 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
   <div class="top"><div><b id="zvT"></b><small id="zvS"></small></div><button type="button" class="x" id="zvX" aria-label="Close">×</button></div>
   <div class="stage" id="zvStage"><img id="zvImg" alt=""><div class="hint" id="zvHint">Pinch or double-tap to zoom · drag to move</div></div>
   <div class="bar2"><button type="button" class="r" id="zvOut" aria-label="Zoom out">−</button><button type="button" class="r" id="zvFit">Fit</button><button type="button" class="r" id="zvIn" aria-label="Zoom in">+</button></div>
+</div>
+
+<div class="done" id="done" hidden role="dialog" aria-modal="true" aria-labelledby="doneH">
+  <div class="box">
+    <div class="medal" aria-hidden="true"><b>50</b><small>OF 50</small></div>
+    <h2 id="doneH">Album complete!</h2>
+    <p id="doneP">Congratulations, you completed the first ever TeC-B sticker album.</p>
+    <div class="place" id="donePlace"></div>
+    <p style="font-size:14px">Show your album at the next event to claim your place on the board.</p>
+    <button type="button" id="doneX">Close</button>
+  </div>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="Sections">
@@ -529,7 +554,7 @@ function tap(n){
   if(filter==="got"&&!have[n])renderAlbum();
   else if(w){paintSlot(s,w);if(have[n]){w.classList.remove("pop");void w.offsetWidth;w.classList.add("pop")}refreshSec(s[3])}
   changed();
-  if(mine().length===TOTAL&&before<TOTAL)celebrate();
+  if(mine().length===TOTAL&&before<TOTAL)status("All 50 ticked. Scan the ones you haven't scanned yet to complete the album.");
 }
 function setSpare(n,d){
   spares[n]=Math.max(0,Math.min(MAXSP,(spares[n]||0)+d));
@@ -562,7 +587,9 @@ Array.prototype.forEach.call(tabs,function(t,i){
 });
 
 /* ---------- board ---------- */
+var firstDone=null;
 function renderBoard(){
+  firstDone=players.filter(function(p){return p.completedAt}).sort(function(a,b){return a.completedAt-b.completedAt})[0]||null;
   var bd=$("board");bd.textContent="";
   if(!players.length){bd.appendChild(el("div","empty","Nobody on the board yet. Join and tick your first sticker."));return}
   players.slice().sort(function(a,b){
@@ -571,7 +598,7 @@ function renderBoard(){
   }).forEach(function(p,i){
     var r=el("div","row"+(p.completedAt?" win":"")+(isMe(p)?" me":""));
     r.appendChild(el("div","pos",String(i+1)));
-    var nm=el("div","nm",p.name);if(isMe(p))nm.appendChild(el("small",null," (you)"));if(p.scanned)nm.appendChild(el("span","scn",p.scanned+" scanned"));if(p.completedAt)nm.appendChild(el("span","tag","Winner"));
+    var nm=el("div","nm",p.name);if(isMe(p))nm.appendChild(el("small",null," (you)"));if(p.scanned)nm.appendChild(el("span","scn",p.scanned+" scanned"));if(p.completedAt)nm.appendChild(el("span","tag",p===firstDone?"Winner":"Complete"));
     r.appendChild(nm);r.appendChild(el("div","ct",p.count+"/"+TOTAL));
     var m=el("div","meter"),tr=el("div","track"),fi=el("i");fi.style.width=(100*p.count/TOTAL)+"%";tr.appendChild(fi);m.appendChild(tr);
     var lg=LEG.filter(function(n){return p.have.indexOf(n)>=0}).length, mini=el("div","mini");mini.setAttribute("aria-label",lg+" legendaries");
@@ -643,6 +670,7 @@ function signedIn(r){
   lsSave();renderCover();renderAlbum();
   $("signin").hidden=true;$("hello").textContent="Hi, "+me;
   restoreArt(r.scanned||[]);
+  if((r.scanned||[]).length===TOTAL)markDone();
   try{localStorage.setItem(LSU,JSON.stringify({n:me,p:pin}))}catch(e){}
   queueWrite();
 }
@@ -767,7 +795,8 @@ $("scanIn").addEventListener("change",function(){
       renderCover();renderAlbum();renderDeals();renderMarket();
       sheet({vis:cardVis(n,r.img,isNew),h:(isNew?"Unlocked: ":"Already unlocked: ")+tec(n),p:BY[n][1]+" · "+RN[BY[n][2]],
         acts:[{t:"View full size",f:function(){openZoom(n)}},{t:"Scan another",pri:true,f:scanAgain},{t:"Done",f:closeSheet}]});
-      if(mine().length===TOTAL&&before<TOTAL)celebrate();
+      if(r.complete){var seen=false;try{seen=localStorage.getItem(LSD)==="1"}catch(e){}
+        if(!seen)setTimeout(function(){closeSheet();showDone(r.place)},2600);else markDone()}
     }).withFailureHandler(function(e){fail((e&&e.message)||"No connection. Try again.")}).scan(me,pin,v);
   }).catch(function(){fail("Couldn't open that photo.")});
 });
@@ -877,6 +906,20 @@ zvStage.addEventListener("pointermove",function(e){
 function zUp(e){delete Z.pts[e.pointerId];var ids=Object.keys(Z.pts);
   if(ids.length===1){var p=Z.pts[ids[0]];Z.start={x:p.x-Z.x,y:p.y-Z.y}}else if(!ids.length)Z.start=null}
 zvStage.addEventListener("pointerup",zUp);zvStage.addEventListener("pointercancel",zUp);
+
+/* ---------- album complete: all 50 scanned ---------- */
+var LSD="tecb-done-v1";
+function ordinal(n){return n+(n%10===1&&n%100!==11?"st":n%10===2&&n%100!==12?"nd":n%10===3&&n%100!==13?"rd":"th")}
+function showDone(place){
+  $("doneP").textContent="Congratulations"+(me?", "+me:"")+"! You completed the first ever TeC-B sticker album. All 50 stickers, scanned and verified.";
+  $("donePlace").textContent=place?(place===1?"You are the 1st to finish. The winner!":"You are the "+ordinal(place)+" to finish."):"";
+  $("done").hidden=false;$("doneX").focus();celebrate();
+  try{localStorage.setItem(LSD,"1")}catch(e){}
+  markDone();
+}
+function markDone(){if(!$("hello").querySelector(".donebadge")){var b=el("span","donebadge","Album complete");$("hello").appendChild(b)}}
+$("doneX").addEventListener("click",function(){$("done").hidden=true});
+$("done").addEventListener("keydown",function(e){if(e.key==="Escape")$("done").hidden=true});
 /* ---------- start ---------- */
 lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,30000);
 if(HAS_SERVER){try{var u=JSON.parse(localStorage.getItem(LSU)||"null");if(u&&u.n&&u.p){pin=u.p;google.script.run.withSuccessHandler(signedIn).withFailureHandler(function(){}).join(u.n,u.p)}}catch(e){}}
