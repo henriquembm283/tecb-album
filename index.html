@@ -665,9 +665,32 @@ function toggleSpare(){
 }
 $("spareT").addEventListener("click",toggleSpare);
 
+/* ---------- back button / swipe-back: closes the top layer instead of leaving the site ---------- */
+var LAYERS=[];
+function pushLayer(name,close){
+  if(LAYERS.length&&LAYERS[LAYERS.length-1].name===name)return;
+  LAYERS.push({name:name,close:close});
+  try{history.pushState({tecb:name,depth:LAYERS.length},"")}catch(e){}
+}
+/* UI close buttons call this: go back one step so history and screen stay in step */
+function popLayer(name){
+  var top=LAYERS[LAYERS.length-1];
+  if(top&&top.name===name){history.back()}
+  else{var i=LAYERS.map(function(l){return l.name}).lastIndexOf(name);if(i>=0){var l=LAYERS.splice(i,1)[0];l.close()}}
+}
+addEventListener("popstate",function(){
+  var l=LAYERS.pop();if(l)l.close();
+});
+
 /* ---------- tabs (mobile) ---------- */
 var tabs=document.querySelectorAll("nav.tabs button");
 function show(id){
+  var cur=document.querySelector(".panel.on");
+  if(id!=="p-album"&&cur&&cur.id==="p-album"&&innerWidth<980)pushLayer("tab",function(){showTab("p-album")});
+  if(id==="p-album"&&LAYERS.length&&LAYERS[LAYERS.length-1].name==="tab"){popLayer("tab");return}
+  showTab(id);
+}
+function showTab(id){
   Array.prototype.forEach.call(tabs,function(t){var on=t.dataset.p===id;t.setAttribute("aria-selected",on?"true":"false");t.tabIndex=on?0:-1});
   Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(p){p.classList.toggle("on",p.id===id)});
   window.scrollTo(0,0);
@@ -853,13 +876,14 @@ function viaImg(file){return new Promise(function(ok,no){var u=URL.createObjectU
 
 var lastFocus=null;
 function sheet(opts){
-  var sh=$("sheet");if(sh.hidden)lastFocus=document.activeElement;sh.hidden=false;lockScroll(true);sh.scrollTop=0;
+  var sh=$("sheet");if(sh.hidden){lastFocus=document.activeElement;pushLayer("sheet",hideSheet)}sh.hidden=false;lockScroll(true);sh.scrollTop=0;
   $("shH").textContent=opts.h||"";$("shP").textContent=opts.p||"";
   var v=$("shVis");v.textContent="";if(opts.vis)v.appendChild(opts.vis);
   var a=$("shA");a.textContent="";(opts.acts||[]).forEach(function(x,i){var b=el("button",x.pri?"pri":"",x.t);b.type="button";b.addEventListener("click",x.f);a.appendChild(b)});
   var f=a.querySelector("button.pri")||a.querySelector("button");if(f)f.focus();
 }
-function closeSheet(){$("sheet").hidden=true;if($("bk").hidden&&$("zv").hidden)lockScroll(false);if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function hideSheet(){$("sheet").hidden=true;if($("bk").hidden&&$("zv").hidden)lockScroll(false);if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function closeSheet(){if(!$("sheet").hidden)popLayer("sheet")}
 $("sheet").addEventListener("keydown",function(e){if(e.key==="Escape")closeSheet()});
 function cardVis(n,img,animate){
   var land=BY[n]&&[35,36,48,49].indexOf(n)>=0;
@@ -871,7 +895,7 @@ function cardVis(n,img,animate){
   if(k==="L")loadClip(n,fr,animate?1700:0);
   return r;
 }
-function scanAgain(){closeSheet();$("scanIn").click()}
+function scanAgain(){sheet({vis:el("div","spin"),h:"Opening the camera…",p:"Take a photo of the next sticker.",acts:[{t:"Cancel",f:closeSheet}]});$("scanIn").value="";$("scanIn").click()}
 $("scanB").addEventListener("click",function(){
   if(!me){show("p-album");$("nm").focus();status("Join the board first, then scan.");return}
   if(!HAS_SERVER){status("Scanning needs the online link.");return}
@@ -893,7 +917,7 @@ $("scanIn").addEventListener("change",function(){
       var badge=el("span","rarity "+k,k==="L"?"★★ LEGENDARY":k==="R"?"★ RARE":"COMMON");$("shP").prepend(document.createTextNode(" "));$("shP").prepend(badge);
       if(isNew)rarityMoment(k);
       if(r.complete){var seen=false;try{seen=localStorage.getItem(LSD)==="1"}catch(e){}
-        if(!seen)setTimeout(function(){closeSheet();showDone(r.place)},2600);else markDone()}
+        if(!seen)setTimeout(function(){closeSheet();setTimeout(function(){showDone(r.place)},250)},2600);else markDone()}
     }).withFailureHandler(function(e){fail((e&&e.message)||"No connection. Try again.")}).scan(me,pin,v);
   }).catch(function(){fail("Couldn't open that photo.")});
 });
@@ -973,9 +997,10 @@ function openZoom(n){
   Z.prevFocus=document.activeElement;Z.s=1;Z.x=0;Z.y=0;Z.pts={};
   zvImg.src=ART[n];zvImg.alt=tec(n)+" "+BY[n][1];zApply();
   $("zvT").textContent=tec(n)+" · "+BY[n][1];$("zvS").textContent=RN[BY[n][2]];
-  $("zv").hidden=false;lockScroll(true);$("zvX").focus();
+  $("zv").hidden=false;lockScroll(true);pushLayer("zoom",hideZoom);$("zvX").focus();
 }
-function closeZoom(){$("zv").hidden=true;lockScroll(false);if(Z.prevFocus&&Z.prevFocus.focus)Z.prevFocus.focus()}
+function closeZoom(){if(!$("zv").hidden)popLayer("zoom")}
+function hideZoom(){$("zv").hidden=true;if($("sheet").hidden&&$("bk").hidden)lockScroll(false);if(Z.prevFocus&&Z.prevFocus.focus)Z.prevFocus.focus()}
 $("zvX").addEventListener("click",closeZoom);
 $("zv").addEventListener("keydown",function(e){if(e.key==="Escape")closeZoom();if(e.key==="+"||e.key==="=")zTo(Z.s*1.5);if(e.key==="-")zTo(Z.s/1.5)});
 $("zvIn").addEventListener("click",function(){zTo(Z.s*1.6)});
@@ -1010,13 +1035,14 @@ function ordinal(n){return n+(n%10===1&&n%100!==11?"st":n%10===2&&n%100!==12?"nd
 function showDone(place){
   $("doneP").textContent="Congratulations"+(me?", "+me:"")+"! You completed the first ever TeC-B sticker album. All 50 stickers, scanned and verified.";
   $("donePlace").textContent=place?(place===1?"You are the 1st to finish. The winner!":"You are the "+ordinal(place)+" to finish."):"";
-  $("done").hidden=false;$("doneX").focus();celebrate();
+  $("done").hidden=false;pushLayer("done",hideDone);$("doneX").focus();celebrate();
   try{localStorage.setItem(LSD,"1")}catch(e){}
   markDone();
 }
 function markDone(){if(!$("hello").querySelector(".donebadge")){var b=el("span","donebadge","Album complete");$("hello").appendChild(b)}}
-$("doneX").addEventListener("click",function(){$("done").hidden=true});
-$("done").addEventListener("keydown",function(e){if(e.key==="Escape")$("done").hidden=true});
+function hideDone(){$("done").hidden=true}
+$("doneX").addEventListener("click",function(){popLayer("done")});
+$("done").addEventListener("keydown",function(e){if(e.key==="Escape")popLayer("done")});
 
 /* ---------- 1. tilt: phone motion sensor, or mouse position on desktop ---------- */
 var RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1122,12 +1148,13 @@ function bkShow(i,dir){
 function openBook(){
   bk.prevFocus=document.activeElement;enableTilt();
   $("bkT").textContent=(me?me+"'s":"My")+" album";
-  $("bk").hidden=false;lockScroll(true);
+  $("bk").hidden=false;lockScroll(true);pushLayer("book",hideBook);
   /* open on the first page that has stickers in it */
   var start=0;for(var i=0;i<SLOTS.length;i++){if((SLOTS[i]||[]).some(function(s){return have[s.n]})){start=i;break}}
   $("bkDesk").textContent="";bkShow(start,0);$("bkX").focus();
 }
-function closeBook(){$("bk").hidden=true;lockScroll(false);if(bk.prevFocus&&bk.prevFocus.focus)bk.prevFocus.focus()}
+function closeBook(){if(!$("bk").hidden)popLayer("book")}
+function hideBook(){$("bk").hidden=true;if($("sheet").hidden&&$("zv").hidden)lockScroll(false);if(bk.prevFocus&&bk.prevFocus.focus)bk.prevFocus.focus()}
 $("bookB").addEventListener("click",openBook);
 $("bkX").addEventListener("click",closeBook);
 $("bkPrev").addEventListener("click",function(){bkShow(bk.i-1,-1)});
