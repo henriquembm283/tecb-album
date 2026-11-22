@@ -257,6 +257,22 @@ footer small{font-size:9px;opacity:.75}
 .clipload{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:2;background:rgba(10,18,40,.75);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
 .slot.art.L .face .play{position:absolute;right:6px;bottom:6px;z-index:2;width:28px;height:28px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1.5px var(--navy)}
 .slot.art.L .face .play svg{width:13px;height:13px;margin-left:2px}
+
+/* ---------- full-size zoom viewer ---------- */
+.zoombtn{position:absolute;left:6px;bottom:6px;z-index:3;width:30px;height:30px;border-radius:50%;border:0;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1.5px var(--navy),0 2px 6px rgba(0,0,0,.3);padding:0}
+.zoombtn svg{width:16px;height:16px}
+.slot .spare,.slot .play{pointer-events:none}
+.zv{position:fixed;inset:0;z-index:60;background:#060c1c;display:flex;flex-direction:column;touch-action:none}
+.zv[hidden]{display:none}
+.zv .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.zv img{max-width:96vw;max-height:calc(100vh - 140px);max-height:calc(100dvh - 140px);border-radius:10px;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-drag:none;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+.zv .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;color:#fff}
+.zv .top b{font-stretch:80%;font-weight:900;font-size:16px}
+.zv .top small{display:block;font-size:12px;color:#9FB0CC;font-weight:600}
+.zv .bar2{display:flex;justify-content:center;gap:10px;padding:10px 14px calc(14px + env(safe-area-inset-bottom))}
+.zv button.r{min-width:48px;height:48px;border-radius:999px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-weight:900;font-size:20px;padding:0 16px}
+.zv button.x{width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:22px;line-height:1}
+.zv .hint{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#9FB0CC;font-size:12px;pointer-events:none}
 canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card3d.flip{transform:rotateY(180deg)}}
 </style>
@@ -345,6 +361,12 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
     <p id="shP"></p>
     <div class="acts" id="shA"></div>
   </div>
+</div>
+
+<div class="zv" id="zv" hidden role="dialog" aria-modal="true" aria-labelledby="zvT">
+  <div class="top"><div><b id="zvT"></b><small id="zvS"></small></div><button type="button" class="x" id="zvX" aria-label="Close">×</button></div>
+  <div class="stage" id="zvStage"><img id="zvImg" alt=""><div class="hint" id="zvHint">Pinch or double-tap to zoom · drag to move</div></div>
+  <div class="bar2"><button type="button" class="r" id="zvOut" aria-label="Zoom out">−</button><button type="button" class="r" id="zvFit">Fit</button><button type="button" class="r" id="zvIn" aria-label="Zoom in">+</button></div>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="Sections">
@@ -460,6 +482,9 @@ function paintSlot(s,w){
   }
   f.appendChild(el("span","num",pad(s[0])));f.appendChild(el("span","ttl",s[1]));
   if(n>0)f.appendChild(el("span","spare","+"+n));
+  if(got&&ART[s[0]]){var zb=el("button","zoombtn");zb.type="button";zb.setAttribute("aria-label","View "+tec(s[0])+" full size");
+    zb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/></svg>';
+    zb.addEventListener("click",function(ev){ev.stopPropagation();openZoom(s[0])});f.appendChild(zb)}
   if(got&&ART[s[0]]&&s[2]==="L"){var pl=el("span","play");pl.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>';pl.title="Watch the animation";f.appendChild(pl)}
   st.children[1].textContent=n;st.children[0].disabled=n<=0;st.children[2].disabled=n>=MAXSP;
 }
@@ -741,7 +766,7 @@ $("scanIn").addEventListener("change",function(){
       var n=r.n,isNew=!ART[n],before=mine().length;ART[n]=r.img;artSave();renderHowto();have[n]=true;lsSave();
       renderCover();renderAlbum();renderDeals();renderMarket();
       sheet({vis:cardVis(n,r.img,isNew),h:(isNew?"Unlocked: ":"Already unlocked: ")+tec(n),p:BY[n][1]+" · "+RN[BY[n][2]],
-        acts:[{t:"Scan another",pri:true,f:scanAgain},{t:"Done",f:closeSheet}]});
+        acts:[{t:"View full size",f:function(){openZoom(n)}},{t:"Scan another",pri:true,f:scanAgain},{t:"Done",f:closeSheet}]});
       if(mine().length===TOTAL&&before<TOTAL)celebrate();
     }).withFailureHandler(function(e){fail((e&&e.message)||"No connection. Try again.")}).scan(me,pin,v);
   }).catch(function(){fail("Couldn't open that photo.")});
@@ -752,7 +777,7 @@ function fail(why){
 }
 function viewArt(n){
   sheet({vis:cardVis(n,ART[n],false),h:tec(n),p:BY[n][1]+" · "+RN[BY[n][2]]+(BY[n][2]==="L"?" · animated":""),
-    acts:[{t:"Close",pri:true,f:closeSheet},{t:"Not in my album",f:function(){have[n]=false;spares[n]=0;closeSheet();renderAlbum();changed()}}]});
+    acts:[{t:"View full size",pri:true,f:function(){openZoom(n)}},{t:"Close",f:closeSheet},{t:"Not in my album",f:function(){have[n]=false;spares[n]=0;closeSheet();renderAlbum();changed()}}]});
 }
 function restoreArt(list){
   var need=(list||[]).filter(function(n){return !ART[n]});if(!need.length||!HAS_SERVER)return;
@@ -798,6 +823,60 @@ function loadClip(n,fr,delay){
   google.script.run.withSuccessHandler(function(src){CLIP[n]=src?toBlobUrl(src):null;put(CLIP[n])})
     .withFailureHandler(function(e){done((e&&e.message&&/doPost|Unknown action/i.test(e.message))?"Update the Google script to see the animation":"Animation unavailable right now")}).getVideo(me,pin,n);
 }
+
+/* ---------- full-size viewer: pinch, double-tap, wheel, drag, +/- ---------- */
+var Z={s:1,x:0,y:0,pts:{},start:null,lastTap:0,prevFocus:null};
+var zvImg=$("zvImg"),zvStage=$("zvStage");
+function zApply(){zvImg.style.transform="translate("+Z.x+"px,"+Z.y+"px) scale("+Z.s+")"}
+function zClamp(){
+  var r=zvImg.getBoundingClientRect(),w=r.width/Z.s,h=r.height/Z.s,sw=zvStage.clientWidth,sh=zvStage.clientHeight;
+  var mx=Math.max(0,(w*Z.s-sw)/2+20),my=Math.max(0,(h*Z.s-sh)/2+20);
+  var cx=(1-Z.s)*w/2,cy=(1-Z.s)*h/2;          /* keep the image centred around its own middle */
+  Z.x=Math.min(cx+mx,Math.max(cx-mx,Z.x));Z.y=Math.min(cy+my,Math.max(cy-my,Z.y));
+}
+function zTo(s,px,py){
+  s=Math.max(1,Math.min(5,s));var r=zvImg.getBoundingClientRect();
+  if(px==null){px=r.left+r.width/2;py=r.top+r.height/2}
+  var ox=r.left-Z.x,oy=r.top-Z.y;              /* image origin without translation */
+  var ix=(px-ox-Z.x)/Z.s,iy=(py-oy-Z.y)/Z.s;    /* point in image coordinates */
+  Z.x=px-ox-ix*s;Z.y=py-oy-iy*s;Z.s=s;
+  if(s===1){Z.x=0;Z.y=0}else zClamp();zApply();
+}
+function openZoom(n){
+  if(!ART[n])return;
+  Z.prevFocus=document.activeElement;Z.s=1;Z.x=0;Z.y=0;Z.pts={};
+  zvImg.src=ART[n];zvImg.alt=tec(n)+" "+BY[n][1];zApply();
+  $("zvT").textContent=tec(n)+" · "+BY[n][1];$("zvS").textContent=RN[BY[n][2]];
+  $("zv").hidden=false;document.body.style.overflow="hidden";$("zvX").focus();
+}
+function closeZoom(){$("zv").hidden=true;document.body.style.overflow="";if(Z.prevFocus&&Z.prevFocus.focus)Z.prevFocus.focus()}
+$("zvX").addEventListener("click",closeZoom);
+$("zv").addEventListener("keydown",function(e){if(e.key==="Escape")closeZoom();if(e.key==="+"||e.key==="=")zTo(Z.s*1.5);if(e.key==="-")zTo(Z.s/1.5)});
+$("zvIn").addEventListener("click",function(){zTo(Z.s*1.6)});
+$("zvOut").addEventListener("click",function(){zTo(Z.s/1.6)});
+$("zvFit").addEventListener("click",function(){zTo(1)});
+zvStage.addEventListener("wheel",function(e){e.preventDefault();zTo(Z.s*(e.deltaY<0?1.2:1/1.2),e.clientX,e.clientY)},{passive:false});
+zvStage.addEventListener("pointerdown",function(e){
+  zvStage.setPointerCapture(e.pointerId);Z.pts[e.pointerId]={x:e.clientX,y:e.clientY};
+  var ids=Object.keys(Z.pts);
+  if(ids.length===1){
+    var now=Date.now();
+    if(now-Z.lastTap<300){zTo(Z.s>1.2?1:2.5,e.clientX,e.clientY);Z.lastTap=0}else Z.lastTap=now;
+    Z.start={x:e.clientX-Z.x,y:e.clientY-Z.y};
+  }
+  if(ids.length===2){var a=Z.pts[ids[0]],b=Z.pts[ids[1]];Z.start={d:Math.hypot(a.x-b.x,a.y-b.y),s:Z.s}}
+  $("zvHint").style.opacity=0;
+});
+zvStage.addEventListener("pointermove",function(e){
+  if(!Z.pts[e.pointerId])return;Z.pts[e.pointerId]={x:e.clientX,y:e.clientY};
+  var ids=Object.keys(Z.pts);
+  if(ids.length===2&&Z.start&&Z.start.d){var a=Z.pts[ids[0]],b=Z.pts[ids[1]];
+    zTo(Z.start.s*Math.hypot(a.x-b.x,a.y-b.y)/Z.start.d,(a.x+b.x)/2,(a.y+b.y)/2)}
+  else if(ids.length===1&&Z.s>1&&Z.start&&Z.start.x!=null){Z.x=e.clientX-Z.start.x;Z.y=e.clientY-Z.start.y;zClamp();zApply()}
+});
+function zUp(e){delete Z.pts[e.pointerId];var ids=Object.keys(Z.pts);
+  if(ids.length===1){var p=Z.pts[ids[0]];Z.start={x:p.x-Z.x,y:p.y-Z.y}}else if(!ids.length)Z.start=null}
+zvStage.addEventListener("pointerup",zUp);zvStage.addEventListener("pointercancel",zUp);
 /* ---------- start ---------- */
 lsLoad();renderCover();renderAlbum();renderHowto();refresh();setInterval(refresh,30000);
 if(HAS_SERVER){try{var u=JSON.parse(localStorage.getItem(LSU)||"null");if(u&&u.n&&u.p){pin=u.p;google.script.run.withSuccessHandler(signedIn).withFailureHandler(function(){}).join(u.n,u.p)}}catch(e){}}
