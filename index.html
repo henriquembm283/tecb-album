@@ -31,7 +31,10 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .live{display:inline-flex;align-items:center;gap:6px}
 .live i{width:7px;height:7px;border-radius:50%;background:#7FD18B}
 .live.off i{background:var(--red)}
-.hello{margin:18px 0 2px;font-size:15px;color:#CFE0F5;min-height:22px}
+.hello{margin:18px 0 2px;font-size:15px;color:#CFE0F5;min-height:22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.swap-user{background:transparent;border:1.5px solid rgba(207,224,245,.55);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;min-height:32px;transition:background-color .15s,border-color .15s}
+.swap-user:hover{background:rgba(255,255,255,.12);border-color:#fff}
+.swap-user:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 .score{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
 .big{font-stretch:125%;font-weight:900;font-size:clamp(52px,14vw,104px);line-height:.82;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .big small{font-size:.42em;letter-spacing:0;color:#9FC0E6;margin-left:4px}
@@ -376,7 +379,7 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
       <div class="mark" aria-label="TeC-B">TeC-B</div>
       <div class="brandside"><span class="live" id="live"><i></i><span id="liveT">Connecting</span></span><span class="season">Sticker album · 2026/27</span></div>
     </div>
-    <p class="hello" id="hello">Your album</p>
+    <p class="hello"><span id="hello">Your album</span><button type="button" class="swap-user" id="outB" hidden>Switch player</button></p>
     <div class="score">
       <div class="big" aria-live="polite"><span id="count">0</span><small>/ 50</small></div>
       <div class="legend" aria-label="Legendaries collected">
@@ -394,12 +397,12 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 <main class="shell">
   <section class="panel on" id="p-album" role="tabpanel" aria-labelledby="t-album">
     <form class="join" id="signin" autocomplete="off">
-      <h3>Join the board</h3>
-      <p>Pick a name and a 4-digit PIN. Use the same ones on any phone to get your album back.</p>
+      <h3>Join or sign in</h3>
+      <p>New here? Pick a name and a 4-digit PIN. Already joined on another phone or computer? Use the same name and PIN to get your album back.</p>
       <div class="fields">
         <label style="flex:1 1 180px">Name<input id="nm" maxlength="30" required autocomplete="nickname"></label>
         <label style="flex:0 1 110px">PIN<input id="pn" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></label>
-        <button class="btn" type="submit">Join</button>
+        <button class="btn" type="submit">Sign in</button>
       </div>
       <div class="err" id="err" role="alert"></div>
     </form>
@@ -783,21 +786,27 @@ function signedIn(r){
   (r.have||[]).forEach(function(n){have[n]=true});
   Object.keys(r.spares||{}).forEach(function(k){spares[k]=Math.max(spares[k]||0,Number(r.spares[k])||0)});
   lsSave();renderCover();renderAlbum();
-  $("signin").hidden=true;$("hello").textContent="Hi, "+me;
+  $("signin").hidden=true;$("hello").textContent="Hi, "+me;$("outB").hidden=!HAS_SERVER;
   restoreArt(r.scanned||[]);
   if((r.scanned||[]).length===TOTAL)markDone();
   try{localStorage.setItem(LSU,JSON.stringify({n:me,p:pin}))}catch(e){}
   queueWrite();
 }
+/* Switch player: forget this device's login and its local copy of the album, so the next person starts clean */
+$("outB").addEventListener("click",function(){
+  if(!confirm("Sign out of "+me+" on this device? Your album stays saved online. Sign back in any time with your name and PIN."))return;
+  try{[LS,LS2,LSU,LSA].forEach(function(k){localStorage.removeItem(k)})}catch(e){}
+  location.reload();
+});
 $("signin").addEventListener("submit",function(ev){
   ev.preventDefault();
   var n=$("nm").value.trim(),p=$("pn").value.trim(),err=$("err");
   if(n.length<2){err.textContent="Use a name with at least 2 letters.";return}
   if(!/^\d{4}$/.test(p)){err.textContent="The PIN must be 4 digits.";return}
-  if(!HAS_SERVER){err.textContent="Joining needs the online link (henriquembm283.github.io/tecb-album).";return}
+  if(!HAS_SERVER){err.textContent="Signing in needs the online link (henriquembm283.github.io/tecb-album).";return}
   err.textContent="Checking…";pin=p;
   google.script.run.withSuccessHandler(function(r){err.textContent="";signedIn(r)})
-    .withFailureHandler(function(e){err.textContent=(e&&e.message)||"Could not join. Try again."}).join(n,p);
+    .withFailureHandler(function(e){err.textContent=(e&&e.message)||"Could not sign in. Check your connection and try again."}).join(n,p);
 });
 
 /* ---------- the one celebration: all 50 ---------- */
