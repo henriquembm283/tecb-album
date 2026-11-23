@@ -938,7 +938,7 @@ function fail(why){
 }
 function viewArt(n){
   sheet({vis:cardVis(n,ART[n],false),h:tec(n),p:BY[n][1]+" · "+RN[BY[n][2]]+(BY[n][2]==="L"?" · animated":""),
-    acts:[{t:"View full size",pri:true,f:function(){openZoom(n)}},{t:"Close",f:closeSheet},{t:"Not in my album",f:function(){have[n]=false;spares[n]=0;closeSheet();renderAlbum();changed()}}]});
+    acts:[{t:"View full size",pri:true,f:function(){openZoom(n)}},{t:"Close",f:closeSheet},{t:"Wrong sticker? Remove it",f:function(){if(!confirm("Remove "+tec(n)+" from your album? Its picture locks again until you scan it."))return;have[n]=false;spares[n]=0;delete ART[n];artSave();closeSheet();renderHowto();renderAlbum();changed();status(tec(n)+" removed.")}}]});
 }
 /* New device: fetch the pictures this player already unlocked. Small batches, one retry, and say so if it fails. */
 function restoreArt(list,tries){
