@@ -940,10 +940,17 @@ function viewArt(n){
   sheet({vis:cardVis(n,ART[n],false),h:tec(n),p:BY[n][1]+" · "+RN[BY[n][2]]+(BY[n][2]==="L"?" · animated":""),
     acts:[{t:"View full size",pri:true,f:function(){openZoom(n)}},{t:"Close",f:closeSheet},{t:"Not in my album",f:function(){have[n]=false;spares[n]=0;closeSheet();renderAlbum();changed()}}]});
 }
-function restoreArt(list){
+/* New device: fetch the pictures this player already unlocked. Small batches, one retry, and say so if it fails. */
+function restoreArt(list,tries){
   var need=(list||[]).filter(function(n){return !ART[n]});if(!need.length||!HAS_SERVER)return;
-  var batch=need.slice(0,10);
-  google.script.run.withSuccessHandler(function(o){Object.keys(o||{}).forEach(function(k){ART[k]=o[k]});artSave();renderHowto();renderAlbum();if(need.length>10)restoreArt(need.slice(10))}).withFailureHandler(function(){}).getArt(me,pin,batch);
+  tries=tries||0;var batch=need.slice(0,3);
+  status("Loading your unlocked pictures…");
+  google.script.run.withSuccessHandler(function(o){Object.keys(o||{}).forEach(function(k){ART[k]=o[k]});artSave();renderHowto();renderAlbum();
+      if(need.length>3)restoreArt(need.slice(3));else status("Saved. Everyone can see it.")})
+    .withFailureHandler(function(e){
+      if(tries<1){setTimeout(function(){restoreArt(need,tries+1)},2500);return}
+      status("Couldn't load your unlocked pictures ("+((e&&e.message)||"error")+"). Reload the page to try again.")})
+    .getArt(me,pin,batch);
 }
 
 
