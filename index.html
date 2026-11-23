@@ -540,8 +540,22 @@ var me=null, pin=null, players=[];
 var LS="tecb-checklist-v2", LS2="tecb-spares-v2", LSU="tecb-user-v2", LSA="tecb-art-v2";
 /* Season reset (Nov 2026): forget everything stored before the wipe, so no device re-uploads old stickers */
 try{["tecb-checklist-v1","tecb-spares-v1","tecb-user-v1","tecb-art-v1"].forEach(function(k){localStorage.removeItem(k)})}catch(e){}
-var ART={};try{ART=JSON.parse(localStorage.getItem(LSA)||"{}")||{}}catch(e){}
-function artSave(){try{localStorage.setItem(LSA,JSON.stringify(ART))}catch(e){}}
+/* Unlocked pictures live in IndexedDB (room for all 50 HD pictures; localStorage only holds ~5 MB).
+   "v3" = HD art: devices drop the older, smaller copies and fetch the new ones once. */
+var ART={}, ARTDB="tecb-art-v3", artSaved={}, artReady=false, artWait=[];
+try{localStorage.removeItem("tecb-art-v1");localStorage.removeItem(LSA)}catch(e){}
+function idb(cb){try{var r=indexedDB.open(ARTDB,1);r.onupgradeneeded=function(){r.result.createObjectStore("a")};r.onsuccess=function(){cb(r.result)};r.onerror=function(){cb(null)}}catch(e){cb(null)}}
+function artLoaded(){artReady=true;var w=artWait;artWait=[];w.forEach(function(f){f()})}
+idb(function(db){
+  if(!db){artLoaded();return}
+  try{var st=db.transaction("a").objectStore("a"),c=st.openCursor();
+    c.onsuccess=function(){var cur=c.result;if(cur){ART[cur.key]=cur.value;artSaved[cur.key]=1;cur.continue()}else{renderAlbum();renderHowto();artLoaded()}};
+    c.onerror=artLoaded}catch(e){artLoaded()}
+});
+/* write only what changed since the last save */
+function artSave(){idb(function(db){if(!db)return;try{var st=db.transaction("a","readwrite").objectStore("a");
+  Object.keys(ART).forEach(function(k){if(!artSaved[k]){st.put(ART[k],k);artSaved[k]=1}});
+  Object.keys(artSaved).forEach(function(k){if(!ART[k]){st.delete(k);delete artSaved[k]}})}catch(e){}})}
 var HAS_SERVER=!!(window.google&&google.script&&google.script.run);
 var BY={};S.forEach(function(s){BY[s[0]]=s});
 var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
@@ -798,7 +812,7 @@ function signedIn(r){
 $("outB").addEventListener("click",function(){
   if(!confirm("Sign out of "+me+" on this device? Your album stays saved online. Sign back in any time with your name and PIN."))return;
   try{[LS,LS2,LSU,LSA].forEach(function(k){localStorage.removeItem(k)})}catch(e){}
-  location.reload();
+  var go=function(){location.reload()};try{var d=indexedDB.deleteDatabase(ARTDB);d.onsuccess=d.onerror=d.onblocked=go;setTimeout(go,1500)}catch(e){go()}
 });
 $("signin").addEventListener("submit",function(ev){
   ev.preventDefault();
@@ -942,6 +956,7 @@ function viewArt(n){
 }
 /* New device: fetch the pictures this player already unlocked. Small batches, one retry, and say so if it fails. */
 function restoreArt(list,tries){
+  if(!artReady){artWait.push(function(){restoreArt(list,tries)});return}
   var need=(list||[]).filter(function(n){return !ART[n]});if(!need.length||!HAS_SERVER)return;
   tries=tries||0;var batch=need.slice(0,3);
   status("Loading your unlocked pictures…");
