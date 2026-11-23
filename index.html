@@ -537,7 +537,9 @@ var TOTAL=S.length, LEG=S.filter(function(s){return s[2]==="L"}).map(function(s)
 var RN={C:"Common",R:"Rare",L:"Legendary"}, MAXSP=9;
 var have={}, spares={}, filter="all", spareMode=false;
 var me=null, pin=null, players=[];
-var LS="tecb-checklist-v1", LS2="tecb-spares-v1", LSU="tecb-user-v1", LSA="tecb-art-v1";
+var LS="tecb-checklist-v2", LS2="tecb-spares-v2", LSU="tecb-user-v2", LSA="tecb-art-v2";
+/* Season reset (Nov 2026): forget everything stored before the wipe, so no device re-uploads old stickers */
+try{["tecb-checklist-v1","tecb-spares-v1","tecb-user-v1","tecb-art-v1"].forEach(function(k){localStorage.removeItem(k)})}catch(e){}
 var ART={};try{ART=JSON.parse(localStorage.getItem(LSA)||"{}")||{}}catch(e){}
 function artSave(){try{localStorage.setItem(LSA,JSON.stringify(ART))}catch(e){}}
 var HAS_SERVER=!!(window.google&&google.script&&google.script.run);
@@ -1039,7 +1041,7 @@ function zUp(e){delete Z.pts[e.pointerId];var ids=Object.keys(Z.pts);
 zvStage.addEventListener("pointerup",zUp);zvStage.addEventListener("pointercancel",zUp);
 
 /* ---------- album complete: all 50 scanned ---------- */
-var LSD="tecb-done-v1";
+var LSD="tecb-done-v2";try{localStorage.removeItem("tecb-done-v1")}catch(e){}
 function ordinal(n){return n+(n%10===1&&n%100!==11?"st":n%10===2&&n%100!==12?"nd":n%10===3&&n%100!==13?"rd":"th")}
 function showDone(place){
   $("doneP").textContent="Congratulations"+(me?", "+me:"")+"! You completed the first ever TeC-B sticker album. All 50 stickers, scanned and verified.";
